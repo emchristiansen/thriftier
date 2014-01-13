@@ -1,0 +1,72 @@
+name:                Thriftier 
+version:             0.1.0.0
+-- synopsis:            
+-- description:         
+license:             MIT
+-- license-file:        LICENSE
+author:              Eric Christiansen             
+-- maintainer:          
+-- copyright:           
+-- category:            
+build-type:          Simple
+cabal-version:       >=1.16
+
+library
+  hs-source-dirs:
+    lib 
+
+  default-extensions: 
+    FlexibleInstances, 
+    FlexibleContexts,
+    FunctionalDependencies,
+    MultiParamTypeClasses,
+    TemplateHaskell,
+    TypeSynonymInstances
+
+  default-language: Haskell2010
+
+  ghc-options: -Wall -auto-all -caf-all -threaded -O2 
+  -- -fllvm
+
+  exposed-modules:
+   Thriftier.Util
+
+  build-depends:
+    base,
+    directory,
+    filepath,
+    pipes,
+    pipes-concurrency,
+    async,
+    MissingH,
+    random,
+    JuicyPixels,
+    bytestring,
+    containers,
+    multimap,
+    monad-memo,
+    repa,
+    MonadRandom,
+    monad-loops,
+    vector,
+    deepseq,
+    lens,
+    hsmagick,
+    JuicyPixels-repa,
+    filemanip
+
+executable thriftier
+  hs-source-dirs:
+    bin
+
+  main-is:
+    Thriftier.hs
+ 
+  default-language:
+    Haskell2010
+
+  build-depends:
+    base,
+    filemanip,
+    process,
+    filepath
