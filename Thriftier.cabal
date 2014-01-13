@@ -32,28 +32,7 @@ library
    Thriftier.Util
 
   build-depends:
-    base,
-    directory,
-    filepath,
-    pipes,
-    pipes-concurrency,
-    async,
-    MissingH,
-    random,
-    JuicyPixels,
-    bytestring,
-    containers,
-    multimap,
-    monad-memo,
-    repa,
-    MonadRandom,
-    monad-loops,
-    vector,
-    deepseq,
-    lens,
-    hsmagick,
-    JuicyPixels-repa,
-    filemanip
+    base
 
 executable thriftier
   hs-source-dirs:
@@ -69,4 +48,5 @@ executable thriftier
     base,
     filemanip,
     process,
-    filepath
+    filepath,
+    regex-compat

@@ -5,6 +5,7 @@ import System.FilePath.Find
 import System.Cmd
 import System.FilePath.Posix
 import Text.Printf
+import Text.Regex
 
 thriftCommand :: FilePath -> FilePath -> String
 thriftCommand interfaceRoot thriftFile =
@@ -21,6 +22,21 @@ runThrift interfaceRoot thriftFile = do
   putStrLn command
   system command
   return ()
+
+skeletonPathToClassName :: FilePath -> String
+skeletonPathToClassName skeletonPath =
+  let 
+    -- E.g. "Features2D_server.skeleton.cpp"
+    fileName = takeFileName skeletonPath
+    Just [className] = matchRegex
+      (mkRegex "(.*)_server.skeleton.cpp")
+      skeletonPath
+  in
+    className
+
+generateHandler :: FilePath -> IO ()
+generateHandler skeletonPath = do
+  undefined
 
 main :: IO ()
 main = do
