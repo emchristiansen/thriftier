@@ -6,6 +6,9 @@ import System.Cmd
 import System.FilePath.Posix
 import Text.Printf
 import Text.Regex
+import System.Directory
+
+import Thriftier.Generate
 
 thriftCommand :: FilePath -> FilePath -> String
 thriftCommand interfaceRoot thriftFile =
@@ -31,7 +34,9 @@ main = do
   mapM_ (runThrift interfaceRoot) thriftPaths
   skeletonPaths <- find always (fileName ~~? "*_server.skeleton.cpp") interfaceRoot
   putStrLn $ show skeletonPaths
-  mapM_ generateHandler skeletonPaths
+  mapM_ (generateHandler interfaceRoot) skeletonPaths
+  -- Remove the skeleton files.
+  mapM_ removeFile skeletonPaths
   putStrLn "Done"
 
 

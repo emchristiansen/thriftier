@@ -8,11 +8,12 @@ import System.FilePath.Posix
 
 import Thriftier.HandlerStub
 import Thriftier.CPPFile
+import Thriftier.Util
 
 generateHandler :: FilePath -> FilePath -> IO ()
 generateHandler interfaceRoot skeletonRelativePath = do
   file <- fromSkeleton $ joinPath [interfaceRoot, skeletonRelativePath]
-  writeFile
+  writeFileUnlessExists
     (joinPath [interfaceRoot, cppRelativePath file])
     (renderAsCPP file)
   writeFile

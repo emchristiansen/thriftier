@@ -36,7 +36,12 @@ library
 
   build-depends:
     base,
-    lens
+    lens,
+    filemanip,
+    process,
+    filepath,
+    regex-compat,
+    directory
 
 executable thriftier
   hs-source-dirs:
@@ -54,4 +59,5 @@ executable thriftier
     filemanip,
     process,
     filepath,
-    regex-compat
+    regex-compat,
+    directory

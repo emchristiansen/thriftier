@@ -26,6 +26,13 @@ mkHandlerStub skeletonCode =
     HandlerStub includes $ head body
 
 handlerName :: HandlerStub -> String
-handlerName = undefined
+handlerName stub = 
+  let 
+    Just className = matchRegex
+      (mkRegex "class (.+)Handler")
+      (stub ^. bodyL)
+  in
+    printf "%sHandler" $ head className
+
 
        

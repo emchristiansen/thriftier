@@ -7,6 +7,7 @@ import Text.Regex
 import System.FilePath.Posix
 
 import Thriftier.HandlerStub
+import Thriftier.Util
 
 data CPPFile = CPPFile
   { _cppfilePathL :: [String]
@@ -30,9 +31,13 @@ mkCPPFile stub directoryName = CPPFile
 fromSkeleton :: FilePath -> IO CPPFile
 fromSkeleton skeletonPath = do
   skeletonCode <- readFile skeletonPath
+  putStrLn skeletonCode
+  putStrLn skeletonPath
+  putStrLn $ takeDirectory skeletonPath
+  putStrLn $ takeDirectory $ normalise skeletonPath
   return $ mkCPPFile
     (mkHandlerStub skeletonCode)
-    (splitDirectories $ takeDirectory skeletonPath)
+    (splitDirectories $ normalise $ takeDirectory skeletonPath)
 
 renderAsCPP :: CPPFile -> String
 renderAsCPP file = unlines $ 
