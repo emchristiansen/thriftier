@@ -3,6 +3,7 @@ module Thriftier.CPPSource where
 import Control.Lens 
 
 data CPPSource = CPPSource {
+  _cppsourceNameL :: String,
   _cppsyntaxIncludesL :: [String],
   _cppsyntaxBodyL :: String
 }
