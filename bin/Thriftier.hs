@@ -30,13 +30,39 @@ skeletonPathToClassName skeletonPath =
     fileName = takeFileName skeletonPath
     Just [className] = matchRegex
       (mkRegex "(.*)_server.skeleton.cpp")
-      skeletonPath
+      fileName 
   in
     className
 
+extractHanderStub :: String -> String -> CPPFile 
+extractHanderStub className skeletonCode =
+  let
+    Just includes = matchRegex
+      (mkRegex "^(#include \".*\")$")
+      skeletonCode
+    Just stub = matchRegex
+      (mkRegex "(class (.|\n)*};)")
+      skeletonCode
+  in
+    -- TODO: Clean up this regex nonsense.
+    CPPFile includes (head stub)
+
+stubToHeader :: CPPFile -> CPPFile
+stubToHeader (CPPFile includes body) = 
+  CPPFile includes $ (init $ takeWhile (/= '{') body) ++ ";"
+
 generateHandler :: FilePath -> IO ()
 generateHandler skeletonPath = do
-  undefined
+  let className = skeletonPathToClassName skeletonPath
+  skeletonCode <- readFile skeletonPath
+  let handlerPath = (takeDirectory skeletonPath) ++ "/" ++ className ++ "Handler"
+  let handlerHPath = handlerPath ++ ".h"
+  let (CPPFile includes body) = extractHanderStub className skeletonCode
+  let handlerStub = CPPFile ("#include \"" ++ handlerHPath ++ "\"" : includes) body
+  let handlerCppPath = handlerPath ++ ".cpp"
+  writeFile handlerCppPath handlerStub
+  let handlerHeader = stubToHeader handlerStub
+  writeFile handlerHPath handlerHeader 
 
 main :: IO ()
 main = do
@@ -44,7 +70,10 @@ main = do
   thriftPaths <- find always (fileName ~~? "*.thrift") interfaceRoot
   putStrLn $ show thriftPaths
   mapM_ (runThrift interfaceRoot) thriftPaths
-  putStrLn "Hi"
+  skeletonPaths <- find always (fileName ~~? "*_server.skeleton.cpp") interfaceRoot
+  putStrLn $ show skeletonPaths
+  mapM_ generateHandler skeletonPaths
+  putStrLn "Done"
 
 
 {-thrift -I . --gen cpp:include_prefix -out modules/features2d modules/features2d/features2d.thrift-}

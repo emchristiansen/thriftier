@@ -29,10 +29,11 @@ library
   -- -fllvm
 
   exposed-modules:
-   Thriftier.Util
+   Thriftier.CPPSource
 
   build-depends:
-    base
+    base,
+    lens
 
 executable thriftier
   hs-source-dirs:
@@ -45,6 +46,7 @@ executable thriftier
     Haskell2010
 
   build-depends:
+    Thriftier,
     base,
     filemanip,
     process,
