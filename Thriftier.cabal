@@ -29,7 +29,10 @@ library
   -- -fllvm
 
   exposed-modules:
-   Thriftier.CPPSource
+   Thriftier.CPPFile,
+   Thriftier.Generate,
+   Thriftier.HandlerStub,
+   Thriftier.Util
 
   build-depends:
     base,
