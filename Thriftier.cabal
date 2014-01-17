@@ -41,7 +41,8 @@ library
     process,
     filepath,
     regex-compat,
-    directory
+    directory,
+    MissingH
 
 executable thriftier
   hs-source-dirs:
