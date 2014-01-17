@@ -52,7 +52,7 @@ toDefinitionSyntax handlerName body =
     aligned = map (drop 2) . lines $ head innerClass
     qualifyName line = 
       case matchRegex
-        (mkRegex "([a-zA-Z]+)\\(.+\\{")
+        (mkRegex "([a-zA-Z0-9]+)\\(.+\\{")
         line of
         Nothing -> line
         Just [name] -> replace
