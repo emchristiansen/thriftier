@@ -1,1 +1,1 @@
-while inotifywait -qq -r -e modify .; do cabal install; echo "Done"; done
+while inotifywait -qq -r -e modify .; do cabal build; echo "Done"; done
