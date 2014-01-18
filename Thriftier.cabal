@@ -63,19 +63,20 @@ executable thriftier
     regex-compat,
     directory
 
-Test-suite test
+Test-suite correctness 
   Default-language:
     Haskell2010
   Type:
     exitcode-stdio-1.0
   Hs-source-dirs:
-    test/correctness
+    test
   Main-is:
-    Thriftier/Run.hs
+    Correctness/Thriftier/Run.hs
   Build-depends:
       base >= 4
     , tasty
     , tasty-hunit
     , tasty-quickcheck
+    , tasty-golden
     , tasty-th
     , Thriftier
