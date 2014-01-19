@@ -1,1 +1,8 @@
-while inotifywait -qq -r -e modify .; do cabal install; echo "Done"; done
+run() {
+  cabal clean &&
+  cabal configure --enable-tests &&
+  cabal build &&
+  cabal install 
+}
+
+while inotifywait -qq -r -e modify .; do run; echo "Done"; done

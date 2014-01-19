@@ -80,7 +80,7 @@ declarations :: CPPFile -> [String]
 declarations file =
   let
     getDeclaration line = matchRegex
-      (mkRegex "^(  [ a-zA-Z0-9]+\\(.*\\)) \\{$")
+      (mkRegex "^  ([ a-zA-Z0-9]+\\(.*\\)) \\{$")
       line
     maybeMatches = map getDeclaration $ lines $ file ^. definitionL
     declarations' = concat $ catMaybes maybeMatches
@@ -95,7 +95,7 @@ renderAsHPP file =
     declaration = unlines $
       [outerDeclaration] ++
       [" public:"] ++
-      (intersperse "" $ declarations file) ++
+      (intersperse "" $ map ("  " ++) $ declarations file) ++
       ["};"]
   in unlines $
     [printf "#ifndef %s" guard] ++
