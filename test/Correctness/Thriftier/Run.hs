@@ -6,6 +6,10 @@ import Data.List
 import Data.Ord
 
 import Correctness.Thriftier.HandlerStub as HandlerStub
+import Correctness.Thriftier.CPPFile as CPPFile 
 
 main :: IO ()
-main = defaultMain HandlerStub.tests
+main = defaultMain $ testGroup "Thriftier" 
+  [ HandlerStub.tests
+  , CPPFile.tests
+  ]

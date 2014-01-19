@@ -35,10 +35,10 @@ mkCPPFile stub directoryName = CPPFile
 fromSkeleton :: FilePath -> IO CPPFile
 fromSkeleton skeletonPath = do
   skeletonCode <- readFile skeletonPath
-  putStrLn skeletonCode
-  putStrLn skeletonPath
-  putStrLn $ takeDirectory skeletonPath
-  putStrLn $ takeDirectory $ normalise skeletonPath
+  {-putStrLn skeletonCode-}
+  {-putStrLn skeletonPath-}
+  {-putStrLn $ takeDirectory skeletonPath-}
+  {-putStrLn $ takeDirectory $ normalise skeletonPath-}
   return $ mkCPPFile
     (mkHandlerStub skeletonCode)
     (splitDirectories $ normalise $ takeDirectory skeletonPath)

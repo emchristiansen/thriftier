@@ -9,9 +9,7 @@ import Data.List
 import Data.Ord
 
 import Thriftier.HandlerStub
-
-skeletonPath :: FilePath
-skeletonPath = "test/data/gen-cpp/MatUtil_server.skeleton.cpp"
+import Correctness.Thriftier.Util
 
 hUnitTests :: TestTree
 hUnitTests = testGroup "Unit tests"
@@ -24,21 +22,6 @@ hUnitTests = testGroup "Unit tests"
       let handler = mkHandlerStub skeletonCode
       (handlerName handler) @?= "MatUtilHandler"
   ]
-
-goldenPath :: FilePath
-goldenPath = "test/data/golden/"
-
-goldenVsFile' :: TestName -> (FilePath -> IO ()) -> TestTree
-goldenVsFile' name mkEstimate = 
-  let
-    golden = goldenPath ++ name 
-    goldenOut =  golden ++ ".goldenOut"
-  in
-    goldenVsFile
-      name
-      golden
-      goldenOut
-      (mkEstimate goldenOut)
 
 goldenTests :: TestTree
 goldenTests = testGroup "Golden tests"
