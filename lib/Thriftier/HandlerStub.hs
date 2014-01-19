@@ -12,6 +12,24 @@ data HandlerStub = HandlerStub
   }
 makeFields ''HandlerStub
 
+quoteIncludes :: String -> [String]
+quoteIncludes skeletonCode =
+  let
+    Just includes = matchRegex
+      (mkRegex "^(#include \".*\")$")
+      skeletonCode
+  in
+    includes
+
+classDefinitions :: String -> [String]
+classDefinitions  skeletonCode =
+  let
+    Just definitions = matchRegex
+      (mkRegex "(class (.|\n)*};)")
+      skeletonCode
+  in
+    definitions
+
 mkHandlerStub :: String -> HandlerStub
 mkHandlerStub skeletonCode =
   -- A hacky parsing of the output of Thrift.
