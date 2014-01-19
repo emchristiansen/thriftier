@@ -31,17 +31,9 @@ classDefinitions  skeletonCode =
     definitions
 
 mkHandlerStub :: String -> HandlerStub
-mkHandlerStub skeletonCode =
-  -- A hacky parsing of the output of Thrift.
-  let
-    Just includes = matchRegex
-      (mkRegex "^(#include \".*\")$")
-      skeletonCode
-    Just body = matchRegex
-      (mkRegex "(class (.|\n)*};)")
-      skeletonCode
-  in
-    HandlerStub includes $ head body
+mkHandlerStub skeletonCode = HandlerStub
+  (quoteIncludes skeletonCode)
+  (head $ classDefinitions skeletonCode)
 
 handlerName :: HandlerStub -> String
 handlerName stub = 

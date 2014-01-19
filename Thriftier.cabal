@@ -78,5 +78,5 @@ Test-suite correctness
     , tasty-hunit
     , tasty-quickcheck
     , tasty-golden
-    , tasty-th
+    --, tasty-th
     , Thriftier
