@@ -21,7 +21,9 @@ library
     FunctionalDependencies,
     MultiParamTypeClasses,
     TemplateHaskell,
-    TypeSynonymInstances
+    TypeSynonymInstances,
+    QuasiQuotes,
+    OverloadedStrings
 
   default-language: Haskell2010
 
@@ -32,7 +34,8 @@ library
    Thriftier.CPPFile,
    Thriftier.Generate,
    Thriftier.HandlerStub,
-   Thriftier.Util
+   Thriftier.Util,
+   Thriftier.Language
 
   build-depends:
     base,
@@ -42,7 +45,10 @@ library
     filepath,
     regex-compat,
     directory,
-    MissingH
+    MissingH,
+    raw-strings-qq,
+    split,
+    text
 
 executable thriftier
   hs-source-dirs:

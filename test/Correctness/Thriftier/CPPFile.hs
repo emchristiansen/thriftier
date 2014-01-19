@@ -13,7 +13,6 @@ hUnitTests :: TestTree
 hUnitTests = testGroup "Unit tests"
   [ testCase "declarations" $ do
       file <-  fromSkeleton skeletonPath
-      putStrLn $ file ^. definitionL
       (declarations file) @?= 
         [ "MatUtilHandler();"
         , "void pack(Mat& _return, const CVType::type type, const MatUnpacked& matUnpacked);"

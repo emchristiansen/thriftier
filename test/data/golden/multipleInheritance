@@ -1,0 +1,7 @@
+service OpenCV {
+  Mat pack(CVType type, MatUnpacked matUnpacked)
+
+  MatUnpacked unpack(Mat mat)
+
+  list<KeyPoint> detect(string detector, mat.Mat image)
+}
