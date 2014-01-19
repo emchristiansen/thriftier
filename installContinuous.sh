@@ -1,6 +1,9 @@
 run() {
   cabal clean &&
-  cabal configure --enable-tests &&
+  cabal configure \
+    --enable-tests \
+    --enable-library-profiling \
+    --enable-executable-profiling &&
   cabal build &&
   cabal install 
 }

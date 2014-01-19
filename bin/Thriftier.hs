@@ -9,6 +9,7 @@ import Text.Regex
 import System.Directory
 
 import Thriftier.Generate
+import Thriftier.Language
 
 thriftCommand :: FilePath -> FilePath -> String
 thriftCommand interfaceRoot thriftFile =
@@ -29,6 +30,8 @@ runThrift interfaceRoot thriftFile = do
 main :: IO ()
 main = do
   [interfaceRoot] <- getArgs
+  thriftierPaths <- find always (fileName ~~? "*.thriftier") interfaceRoot
+  mapM_ (writeThriftierToThrift interfaceRoot) thriftierPaths
   thriftPaths <- find always (fileName ~~? "*.thrift") interfaceRoot
   putStrLn $ show thriftPaths
   mapM_ (runThrift interfaceRoot) thriftPaths
