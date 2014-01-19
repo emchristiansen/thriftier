@@ -1,6 +1,6 @@
 run() {
   cabal clean &&
-  cabal configure --enable-tests &&
+  sh configure.sh &&
   cabal build &&
   cabal test
 }
