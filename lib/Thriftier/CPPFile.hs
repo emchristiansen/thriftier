@@ -6,6 +6,7 @@ import Data.List
 import Text.Regex
 import System.FilePath.Posix
 import Data.String.Utils
+import Data.Maybe
 
 import Thriftier.HandlerStub
 import Thriftier.Util
@@ -75,11 +76,27 @@ renderAsCPP file = unlines $
   [""] ++ 
   [toDefinitionSyntax (getHandlerName file) (file ^. definitionL)]
 
+declarations :: CPPFile -> [String]
+declarations file =
+  let
+    getDeclaration line = matchRegex
+      (mkRegex "^(  [ a-zA-Z0-9]+\\(.*\\)) \\{$")
+      line
+    maybeMatches = map getDeclaration $ lines $ file ^. definitionL
+    declarations' = concat $ catMaybes maybeMatches
+  in
+    map (++ ";") declarations' 
+
 renderAsHPP :: CPPFile -> String
 renderAsHPP file = 
   let 
     guard = mkString "_" "_" "_" $ file ^. pathL 
-    declaration = (init $ takeWhile (/= '{') $ file ^. definitionL) ++ " {};"
+    outerDeclaration = (init $ takeWhile (/= '{') $ file ^. definitionL) ++ " {"
+    declaration = unlines $
+      [outerDeclaration] ++
+      [" public:"] ++
+      (intersperse "" $ declarations file) ++
+      ["};"]
   in unlines $
     [printf "#ifndef %s" guard] ++
     [printf "#define %s" guard] ++

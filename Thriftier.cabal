@@ -74,6 +74,7 @@ Test-suite correctness
     Correctness/Thriftier/Run.hs
   Build-depends:
       base >= 4
+    , lens
     , tasty
     , tasty-hunit
     , tasty-quickcheck

@@ -1,0 +1,16 @@
+#ifndef _test_data_gen-cpp_MatUtilHandler_
+#define _test_data_gen-cpp_MatUtilHandler_
+
+#include "MatUtil.h"
+
+class MatUtilHandler : virtual public MatUtilIf {
+ public:
+  MatUtilHandler();
+
+  void pack(Mat& _return, const CVType::type type, const MatUnpacked& matUnpacked);
+
+  void unpack(MatUnpacked& _return, const Mat& mat);
+};
+
+
+#endif // _test_data_gen-cpp_MatUtilHandler_
