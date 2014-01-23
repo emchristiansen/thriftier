@@ -21,7 +21,7 @@ thriftIncludes thriftFile =
 
 thriftIncludesRecursive :: FilePath -> FilePath -> IO [FilePath]
 thriftIncludesRecursive root thriftPath = do
-  file <- readFile $ root ++ thriftPath 
+  file <- readFile $ joinPath [root, thriftPath]
   let includes = thriftIncludes file
   transitiveIncludes <- mapM (thriftIncludesRecursive root) includes
   return $ includes ++ (concat transitiveIncludes)
@@ -67,10 +67,12 @@ serviceContents thriftFile serviceName =
 
 generateMultipleInheritanceService :: FilePath -> FilePath -> IO String 
 generateMultipleInheritanceService root thriftPath = do
-  file <- readFile $ root ++ thriftPath
+  file <- readFile $ joinPath [root, thriftPath]
   let (serviceName, ancestors) = serviceNameAndAncestors file
   includes <- thriftIncludesRecursive root thriftPath
-  files <- mapM (readFile . (root ++)) includes
+  files <- mapM 
+    (\include -> readFile $ joinPath [root, include]) 
+    includes
   let 
     serviceStatements = do
       ancestor <- ancestors
@@ -84,7 +86,7 @@ generateMultipleInheritanceService root thriftPath = do
 
 thriftierToThrift :: FilePath -> FilePath -> IO String
 thriftierToThrift root thriftierPath = do
-  file <- readFile $ root ++ thriftierPath
+  file <- readFile $ joinPath [root, thriftierPath]
   let includes = unlines $ filter (isInfixOf "include") $ lines file
   service <- generateMultipleInheritanceService root thriftierPath
   return $ includes ++ "\n" ++ service
@@ -93,5 +95,5 @@ writeThriftierToThrift :: FilePath -> FilePath -> IO ()
 writeThriftierToThrift root thriftierPath = do
   thrift <- thriftierToThrift root thriftierPath
   writeFile
-    (replaceExtension (root ++ thriftierPath) "thrift")
+    (replaceExtension (joinPath [root, thriftierPath]) "thrift")
     thrift
