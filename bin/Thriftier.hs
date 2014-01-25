@@ -46,11 +46,11 @@ main = do
   thriftPaths <- find always (fileName ~~? "*.thrift") interfaceRoot
   putStrLn $ show thriftPaths
   mapM_ (runThrift interfaceRoot outputRoot) thriftPaths
-  {-skeletonPaths <- find always (fileName ~~? "*_server.skeleton.cpp") outputRoot-}
-  {-putStrLn $ show skeletonPaths-}
-  {-mapM_ (generateHandler outputRoot) skeletonPaths-}
-   {-Remove the skeleton files.-}
-  {-mapM_ (\path -> removeFile $ joinPath [outputRoot, path]) skeletonPaths-}
+  skeletonPaths <- find always (fileName ~~? "*_server.skeleton.cpp") outputRoot
+  putStrLn $ show skeletonPaths
+  mapM_ (generateHandler outputRoot) skeletonPaths
+  -- Remove the skeleton files.
+  mapM_ (\path -> removeFile $ joinPath [outputRoot, path]) skeletonPaths
   putStrLn "Done"
 
 

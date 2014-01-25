@@ -22,10 +22,12 @@ getHandlerName :: CPPFile -> String
 getHandlerName file = last $ file ^. pathL
 
 cppRelativePath :: CPPFile -> FilePath
-cppRelativePath file = addExtension (joinPath $ file ^. pathL) ".cpp"
+cppRelativePath file = 
+  normalise $ addExtension (joinPath $ file ^. pathL) ".cpp"
 
 hppRelativePath :: CPPFile -> FilePath
-hppRelativePath file = addExtension (joinPath $ file ^. pathL) ".hpp"
+hppRelativePath file = 
+  normalise $ addExtension (joinPath $ file ^. pathL) ".hpp"
 
 mkCPPFile :: HandlerStub -> [String] -> CPPFile
 mkCPPFile stub directoryName = CPPFile 
@@ -33,9 +35,9 @@ mkCPPFile stub directoryName = CPPFile
   (stub ^. includesL) 
   (stub ^. bodyL)
 
-fromSkeleton :: FilePath -> IO CPPFile
-fromSkeleton skeletonPath = do
-  skeletonCode <- readFile skeletonPath
+fromSkeleton :: FilePath -> FilePath -> IO CPPFile
+fromSkeleton outputRoot skeletonPath = do
+  skeletonCode <- readFile $ joinPath [outputRoot, skeletonPath]
   {-putStrLn skeletonCode-}
   {-putStrLn skeletonPath-}
   {-putStrLn $ takeDirectory skeletonPath-}

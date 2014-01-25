@@ -11,11 +11,11 @@ import Thriftier.CPPFile
 import Thriftier.Util
 
 generateHandler :: FilePath -> FilePath -> IO ()
-generateHandler interfaceRoot skeletonRelativePath = do
-  file <- fromSkeleton $ joinPath [interfaceRoot, skeletonRelativePath]
+generateHandler outputRoot skeletonRelativePath = do
+  file <- fromSkeleton outputRoot skeletonRelativePath
   writeFileUnlessExists
-    (joinPath [interfaceRoot, cppRelativePath file])
+    (joinPath [outputRoot, cppRelativePath file])
     (renderAsCPP file)
   writeFile
-    (joinPath [interfaceRoot, hppRelativePath file])
+    (joinPath [outputRoot, hppRelativePath file])
     (renderAsHPP file)

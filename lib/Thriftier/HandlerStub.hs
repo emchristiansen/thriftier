@@ -16,10 +16,10 @@ quoteIncludes :: String -> [String]
 quoteIncludes skeletonCode =
   let
     Just includes = matchRegex
-      (mkRegex "^(#include \".*\")$")
+      (mkRegex "^#include \"(.*)\"$")
       skeletonCode
   in
-    includes
+    map (printf "#include \"%s\"") $ map normalise includes
 
 classDefinitions :: String -> [String]
 classDefinitions  skeletonCode =
