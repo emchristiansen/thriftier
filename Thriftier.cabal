@@ -57,10 +57,20 @@ executable thriftier
   hs-source-dirs:
     bin
 
-  ghc-options: -Wall -auto-all -caf-all -prof
+  ghc-options: -Wall -auto-all -caf-all
 
   main-is:
     Thriftier.hs
+
+  default-extensions: 
+    FlexibleInstances, 
+    FlexibleContexts,
+    FunctionalDependencies,
+    MultiParamTypeClasses,
+    TemplateHaskell,
+    TypeSynonymInstances,
+    QuasiQuotes,
+    OverloadedStrings
  
   default-language:
     Haskell2010
@@ -73,7 +83,8 @@ executable thriftier
     process,
     filepath,
     regex-compat,
-    directory
+    directory,
+    optparse-applicative
 
 Test-suite correctness 
   Default-language:
