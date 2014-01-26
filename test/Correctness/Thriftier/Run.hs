@@ -13,5 +13,5 @@ main :: IO ()
 main = defaultMain $ testGroup "Thriftier" 
   [ HandlerStub.tests
   , CPPFile.tests
-  , Language.tests
+  {-, Language.tests-}
   ]

@@ -1,16 +1,16 @@
-#ifndef _test_data_gen-cpp_MatUtilHandler_
-#define _test_data_gen-cpp_MatUtilHandler_
+#ifndef _OpenCV_Core_MatUtilHandler_
+#define _OpenCV_Core_MatUtilHandler_
 
-#include "MatUtil.h"
+#include "OpenCV/Core/MatUtil.h"
 
 class MatUtilHandler : virtual public MatUtilIf {
  public:
   MatUtilHandler();
 
-  void pack(Mat& _return, const CVType::type type, const MatUnpacked& matUnpacked);
+  void pack( ::Mat& _return, const  ::CVType::type type, const  ::MatUnpacked& matUnpacked);
 
-  void unpack(MatUnpacked& _return, const Mat& mat);
+  void unpack( ::MatUnpacked& _return, const  ::Mat& mat);
 };
 
 
-#endif // _test_data_gen-cpp_MatUtilHandler_
+#endif // _OpenCV_Core_MatUtilHandler_

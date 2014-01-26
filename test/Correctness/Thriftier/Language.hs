@@ -67,5 +67,4 @@ goldenTests = testGroup "Golden tests"
         {-(n :: Integer) >= 3 QC.==> x^n + y^n /= (z^n :: Integer)-}
   {-]-}
 
-{-tests = testGroup "HandlerStub" [unitTests, properties]-}
 tests = testGroup "Language" [hUnitTests, goldenTests]

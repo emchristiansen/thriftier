@@ -8,10 +8,13 @@ import Test.Tasty.Golden
 import Thriftier.ImplementationRoot
 
 interfaceRoot :: InterfaceRoot
-interfaceRoot = InterfaceRoot "test/data"
+interfaceRoot = InterfaceRoot "test/data/OpenCVInterface"
 
-skeletonModuleThrift :: ModuleThrift 
-skeletonModuleThrift = ModuleThrift "OpenCV/Core/MatUtil.thrift"
+implementationRoot :: ImplementationRoot
+implementationRoot = ImplementationRoot "test/data/OpenCVImplementation"
+
+skeletonModuleCPP :: ModuleCPP 
+skeletonModuleCPP = ModuleCPP "OpenCV/Core/MatUtil_server.skeleton.cpp"
 {-skeletonPath = "test/data/gen-cpp/MatUtil_server.skeleton.cpp"-}
 
 goldenPath :: FilePath

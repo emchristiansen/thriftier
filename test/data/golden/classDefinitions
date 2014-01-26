@@ -4,12 +4,12 @@ class MatUtilHandler : virtual public MatUtilIf {
     // Your initialization goes here
   }
 
-  void pack(Mat& _return, const CVType::type type, const MatUnpacked& matUnpacked) {
+  void pack( ::Mat& _return, const  ::CVType::type type, const  ::MatUnpacked& matUnpacked) {
     // Your implementation goes here
     printf("pack\n");
   }
 
-  void unpack(MatUnpacked& _return, const Mat& mat) {
+  void unpack( ::MatUnpacked& _return, const  ::Mat& mat) {
     // Your implementation goes here
     printf("unpack\n");
   }
