@@ -32,6 +32,9 @@ library
 
   exposed-modules:
    Thriftier.CPPFile,
+   Thriftier.ImplementationRoot,
+   Thriftier.InterfaceRoot,
+   Thriftier.ModulePath,
    Thriftier.Generate,
    Thriftier.HandlerStub,
    Thriftier.Util,
@@ -65,6 +68,7 @@ executable thriftier
   build-depends:
     Thriftier,
     base,
+    lens,
     filemanip,
     process,
     filepath,

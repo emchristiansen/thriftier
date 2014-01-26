@@ -10,41 +10,47 @@ import Data.Maybe
 
 import Thriftier.HandlerStub
 import Thriftier.Util
+import Thriftier.ModulePath
+import Thriftier.ImplementationRoot
+import Thriftier.InterfaceRoot
 
 data CPPFile = CPPFile
-  { _cppfilePathL :: [String]
+  { _cppfileModuleL :: Module 
   , _cppfileIncludesL :: [String]
   , _cppfileDefinitionL :: String
   }
 makeFields ''CPPFile
 
 getHandlerName :: CPPFile -> String
-getHandlerName file = last $ file ^. pathL
+getHandlerName file = last $ splitDirectories $ file ^. moduleL ^. valueL 
 
-cppRelativePath :: CPPFile -> FilePath
-cppRelativePath file = 
-  normalise $ addExtension (joinPath $ file ^. pathL) ".cpp"
+{-cppRelativePath :: CPPFile -> ModuleCPP-}
+{-cppRelativePath file = -}
+  {-addExtension (file ^. modulePathL ^. valueL) ".cpp"-}
 
-hppRelativePath :: CPPFile -> FilePath
-hppRelativePath file = 
-  normalise $ addExtension (joinPath $ file ^. pathL) ".hpp"
+{-hppRelativePath :: CPPFile -> FilePath-}
+{-hppRelativePath file = -}
+  {-addExtension (file ^. modulePathL ^. valueL) ".hpp"-}
 
-mkCPPFile :: HandlerStub -> [String] -> CPPFile
-mkCPPFile stub directoryName = CPPFile 
-  (directoryName ++ [handlerName stub])
+mkCPPFile :: HandlerStub -> ModuleParent -> CPPFile
+mkCPPFile stub moduleParent = CPPFile 
+  (mkModule moduleParent (handlerName stub))
   (stub ^. includesL) 
   (stub ^. bodyL)
 
-fromSkeleton :: FilePath -> FilePath -> IO CPPFile
-fromSkeleton outputRoot skeletonPath = do
-  skeletonCode <- readFile $ joinPath [outputRoot, skeletonPath]
+fromSkeleton :: ImplementationRoot -> ModuleCPP -> IO CPPFile
+fromSkeleton implementationRoot skeletonModuleCPP = do
+  skeletonCode <- readFile $ joinPath 
+    [ implementationRoot ^. valueL
+    , skeletonModuleCPP ^. valueL
+    ]
   {-putStrLn skeletonCode-}
   {-putStrLn skeletonPath-}
   {-putStrLn $ takeDirectory skeletonPath-}
   {-putStrLn $ takeDirectory $ normalise skeletonPath-}
   return $ mkCPPFile
     (mkHandlerStub skeletonCode)
-    (splitDirectories $ normalise $ takeDirectory skeletonPath)
+    (mkParentFromModuleCPP skeletonModuleCPP)
 
 toDefinitionSyntax :: String -> String -> String
 toDefinitionSyntax handlerName body =
@@ -72,7 +78,7 @@ toDefinitionSyntax handlerName body =
 
 renderAsCPP :: CPPFile -> String
 renderAsCPP file = unlines $ 
-  [printf "#include \"%s\"" $ hppRelativePath file] ++ 
+  [printf "#include \"%s\"" $ (mkModuleHPP (file ^. moduleL)) ^. valueL] ++ 
   [""] ++ 
   file ^. includesL ++
   [""] ++ 
@@ -92,7 +98,7 @@ declarations file =
 renderAsHPP :: CPPFile -> String
 renderAsHPP file = 
   let 
-    guard = mkString "_" "_" "_" $ file ^. pathL 
+    guard = mkString "_" "_" "_" $ splitDirectories $ file ^. moduleL ^. valueL 
     outerDeclaration = (init $ takeWhile (/= '{') $ file ^. definitionL) ++ " {"
     declaration = unlines $
       [outerDeclaration] ++
