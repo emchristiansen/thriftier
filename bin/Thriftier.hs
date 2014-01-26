@@ -17,10 +17,10 @@ import Thriftier.ImplementationRoot
 thriftCommand :: InterfaceRoot -> ModuleThrift -> FilePath -> String
 thriftCommand interfaceRoot moduleThrift implementationDirectory =
   printf 
-    "cd %s; thrift -I . --gen cpp:include_prefix -out %s %s" 
-    (interfaceRoot ^. valueL)
-    implementationDirectory
-    (moduleThrift ^. valueL)
+    "cd %s; thrift -nowarn -I . --gen cpp:include_prefix -out %s %s" 
+    (normalise $ interfaceRoot ^. valueL)
+    (normalise implementationDirectory)
+    (normalise $ moduleThrift ^. valueL)
 
 runThrift :: InterfaceRoot -> ImplementationRoot -> ModuleThrift -> IO ()
 runThrift interfaceRoot implementationRoot moduleThrift = do
@@ -53,21 +53,21 @@ main = do
       {-createDirectoryIfMissing True outputDirectory-}
   {-mapM makeOutputDirectory interfaceDirectories-}
   {-mapM_ (writeThriftierToThrift interfaceRoot) thriftierPaths-}
-  thriftModules <- liftM (map ModuleThrift) $
+  thriftModules <- liftM (map (ModuleThrift . (makeRelative (interfaceRoot ^. valueL)))) $
     find always (fileName ~~? "*.thrift") (interfaceRoot ^. valueL)
   putStrLn $ show thriftModules
   mapM_ (runThrift interfaceRoot implementationRoot) thriftModules
-  skeletonModuleCPPs <- liftM (map ModuleCPP) $ 
+  skeletonModuleCPPs <- liftM (map (ModuleCPP . (makeRelative (implementationRoot ^. valueL)))) $ 
     find always (fileName ~~? "*_server.skeleton.cpp") (implementationRoot ^. valueL)
   putStrLn $ show skeletonModuleCPPs
   mapM_ (generateHandler implementationRoot) skeletonModuleCPPs
   -- Remove the skeleton files.
-  mapM_ 
-    (\skeletonModuleCPP -> removeFile $ joinPath 
-      [ implementationRoot ^. valueL
-      , skeletonModuleCPP ^. valueL
-      ]) 
-    skeletonModuleCPPs
+  {-mapM_ -}
+    {-(\skeletonModuleCPP -> removeFile $ joinPath -}
+      {-[ implementationRoot ^. valueL-}
+      {-, skeletonModuleCPP ^. valueL-}
+      {-]) -}
+    {-skeletonModuleCPPs-}
   putStrLn "Done"
 
 
