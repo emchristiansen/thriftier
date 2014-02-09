@@ -18,6 +18,7 @@ import Options.Applicative
 data Arguments = Arguments 
   { _argumentsCPPServerL :: Bool
   , _argumentsHSClientL :: Bool
+  , _argumentsPYClientL :: Bool
   , _argumentsInterfaceRootL :: InterfaceRoot
   , _argumentsImplementationRootL :: ImplementationRoot
   } deriving (Show)
@@ -29,6 +30,8 @@ argumentsParser = Arguments
     (long "cpp-server" <> help "Generate server-side C++ code.")
   <*> switch
     (long "hs-client" <> help "Generate client-side Haskell code.")
+  <*> switch
+    (long "py-client" <> help "Generate client-side Python code.")
   <*> (InterfaceRoot <$> strOption
     (long "interface-root" <> help "Root directory of Thrift interface."))
   <*> (ImplementationRoot <$> strOption
@@ -93,12 +96,22 @@ hsClient interfaceRoot implementationRoot = do
   mapM_ (runThrift interfaceRoot implementationRoot tweakOutputDirectory "hs") thriftModules
   putStrLn "Generated Haskell client code."
 
+pyClient :: InterfaceRoot -> ImplementationRoot -> IO ()
+pyClient interfaceRoot implementationRoot = do
+  thriftModules <- liftM (map ModuleThrift) $ 
+    findFileGlob (interfaceRoot ^. valueL) "*.thrift"
+  putStrLn $ show thriftModules
+  let tweakOutputDirectory = id --(++ "/gen-py")
+  mapM_ (runThrift interfaceRoot implementationRoot tweakOutputDirectory "py:new_style") thriftModules
+  putStrLn "Generated Python client code."
 
 run :: Arguments -> IO ()
-run (Arguments True False interfaceRoot implementationRoot) = 
+run (Arguments True False False interfaceRoot implementationRoot) = 
   cppServer interfaceRoot implementationRoot
-run (Arguments False True interfaceRoot implementationRoot) = 
+run (Arguments False True False interfaceRoot implementationRoot) = 
   hsClient interfaceRoot implementationRoot
+run (Arguments False False True interfaceRoot implementationRoot) = 
+  pyClient interfaceRoot implementationRoot
 run _ = putStrLn "Usage error."
 
 main :: IO ()
