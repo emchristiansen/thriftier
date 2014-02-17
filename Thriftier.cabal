@@ -1,13 +1,7 @@
 name:                Thriftier 
 version:             0.1.0.0
--- synopsis:            
--- description:         
 license:             MIT
--- license-file:        LICENSE
 author:              Eric Christiansen             
--- maintainer:          
--- copyright:           
--- category:            
 build-type:          Simple
 cabal-version:       >=1.16
 
@@ -15,94 +9,111 @@ library
   hs-source-dirs:
     lib 
 
-  default-extensions: 
-    FlexibleInstances, 
-    FlexibleContexts,
-    FunctionalDependencies,
-    MultiParamTypeClasses,
-    TemplateHaskell,
-    TypeSynonymInstances,
-    QuasiQuotes,
-    OverloadedStrings
-
-  default-language: Haskell2010
-
-  ghc-options: -Wall -auto-all -caf-all -O2
-  -- -fllvm
-
   exposed-modules:
-   Thriftier.CPPFile,
-   Thriftier.ImplementationRoot,
-   Thriftier.InterfaceRoot,
-   Thriftier.ModulePath,
-   Thriftier.Generate,
-   Thriftier.HandlerStub,
-   Thriftier.Util,
+   Thriftier.CPPFile
+   Thriftier.ImplementationRoot
+   Thriftier.InterfaceRoot
+   Thriftier.ModulePath
+   Thriftier.Generate
+   Thriftier.HandlerStub
+   Thriftier.Util
    Thriftier.Language
 
+  default-language: 
+    Haskell2010
+
+  default-extensions: 
+    FlexibleInstances
+    FlexibleContexts
+    FunctionalDependencies
+    MultiParamTypeClasses
+    TemplateHaskell
+    TypeSynonymInstances
+    QuasiQuotes
+    OverloadedStrings
+
+  ghc-options: 
+    -Wall 
+    -auto-all 
+    -caf-all 
+    -O2
+
   build-depends:
-    base,
-    lens,
-    filemanip,
-    process,
-    filepath,
-    regex-compat,
-    directory,
-    MissingH,
-    raw-strings-qq,
-    split,
-    text
+      base
+    , lens
+    , filemanip
+    , process
+    , filepath
+    , regex-compat
+    , directory
+    , MissingH
+    , raw-strings-qq
+    , split
+    , text
 
 executable thriftier
   hs-source-dirs:
     bin
 
-  ghc-options: -Wall -auto-all -caf-all
-
   main-is:
     Thriftier.hs
 
-  default-extensions: 
-    FlexibleInstances, 
-    FlexibleContexts,
-    FunctionalDependencies,
-    MultiParamTypeClasses,
-    TemplateHaskell,
-    TypeSynonymInstances,
-    QuasiQuotes,
-    OverloadedStrings
- 
-  default-language:
+  default-language: 
     Haskell2010
+
+  default-extensions: 
+    FlexibleInstances
+    FlexibleContexts
+    FunctionalDependencies
+    MultiParamTypeClasses
+    TemplateHaskell
+    TypeSynonymInstances
+    QuasiQuotes
+    OverloadedStrings
+
+  ghc-options: 
+    -Wall 
+    -auto-all 
+    -caf-all 
+    -O2
 
   build-depends:
-    Thriftier,
-    base,
-    lens,
-    filemanip,
-    process,
-    filepath,
-    regex-compat,
-    directory,
-    optparse-applicative
+      base
+    , lens
+    , filemanip
+    , process
+    , filepath
+    , regex-compat
+    , directory
+    , MissingH
+    , raw-strings-qq
+    , split
+    , text
+    , directory
+    , optparse-applicative
 
 Test-suite correctness 
-  Default-language:
-    Haskell2010
-  ghc-options: -Wall -auto-all -caf-all -O2 -prof
-  Type:
+  type:
     exitcode-stdio-1.0
-  Hs-source-dirs:
+
+  hs-source-dirs:
     test
-  Main-is:
+
+  main-is:
     Correctness/Thriftier/Run.hs
-  Build-depends:
+
+  ghc-options: 
+    -Wall 
+    -auto-all 
+    -caf-all 
+    -O2
+
+  build-depends:
       base >= 4
     , lens
     , tasty
     , tasty-hunit
     , tasty-quickcheck
     , tasty-golden
-    --, tasty-th
     , Thriftier
     , filepath
