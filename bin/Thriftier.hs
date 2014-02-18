@@ -114,14 +114,37 @@ run (Arguments False False True interfaceRoot implementationRoot) =
   pyClient interfaceRoot implementationRoot
 run _ = putStrLn "Usage error."
 
+data Command = Start String | Stop
+
+startParser :: Parser Command
+startParser = Start <$> strOption ( long "start" )
+
+commandParser :: Parser Command
+commandParser =  
+  subparser
+    ( command "start" (info startParser 
+      ( progDesc "Add a file to the repository" ))
+    <> command "stop" (info (pure Stop) 
+      ( progDesc "Record changes to the repository" ))
+  )
+
+myRun :: Command -> IO ()
+myRun = undefined
+
+{-sample :: Parser Sample-}
+{-sample = subparser-}
+       {-( command "hello"-}
+         {-(info hello-}
+               {-(progDesc "Print greeting"))-}
+      {-<> command "goodbye"-}
+         {-(info (pure Goodbye)-}
+               {-(progDesc "Say goodbye"))-}
+       {-)-}
+
+opts :: ParserInfo Command
+opts = info (commandParser <**> helper) idm
+
 main :: IO ()
-main = execParser opts >>= run 
-  where
-    opts = info (helper <*> argumentsParser)
-      ( fullDesc
-     <> progDesc "Invoke Thriftier to generate server or client code."
-     <> header "Thriftier: A tool on which makes Apache Thrift a bit nicer to use." )
-
-
+main = execParser opts >>= myRun
 
 

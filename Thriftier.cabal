@@ -79,6 +79,7 @@ executable thriftier
 
   build-depends:
       base
+    , Thriftier
     , lens
     , filemanip
     , process
@@ -101,6 +102,19 @@ Test-suite correctness
 
   main-is:
     Correctness/Thriftier/Run.hs
+
+  default-language: 
+    Haskell2010
+
+  default-extensions: 
+    FlexibleInstances
+    FlexibleContexts
+    FunctionalDependencies
+    MultiParamTypeClasses
+    TemplateHaskell
+    TypeSynonymInstances
+    QuasiQuotes
+    OverloadedStrings
 
   ghc-options: 
     -Wall 
