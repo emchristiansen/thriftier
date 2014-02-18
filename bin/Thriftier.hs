@@ -15,27 +15,43 @@ import Thriftier.Language
 import Thriftier.ImplementationRoot
 import Options.Applicative
 
+{-data Arguments = Arguments -}
+  {-{ _argumentsCPPServerL :: Bool-}
+  {-, _argumentsHSClientL :: Bool-}
+  {-, _argumentsPYClientL :: Bool-}
+  {-, _argumentsInterfaceRootL :: InterfaceRoot-}
+  {-, _argumentsImplementationRootL :: ImplementationRoot-}
+  {-} deriving (Show)-}
+{-makeFields ''Arguments-}
+
+data CodeType = ImplementationStub | Client deriving (Eq, Show)
+
+implementationStubParser :: Parser CodeType
+implementationStubParser = flag' ImplementationStub (long "stub")
+
+clientStubParser :: Parser CodeType
+clientStubParser = flag' Client (long "client")
+
+codeTypeParser :: Parser CodeType
+codeTypeParser = (implementationStubParser <|> clientStubParser)
+
 data Arguments = Arguments 
-  { _argumentsCPPServerL :: Bool
-  , _argumentsHSClientL :: Bool
-  , _argumentsPYClientL :: Bool
+  { _argumentsCodeTypeL :: CodeType
+  , _argumentsLanguageL :: String
   , _argumentsInterfaceRootL :: InterfaceRoot
-  , _argumentsImplementationRootL :: ImplementationRoot
+  , _argumentsOutputRootL :: FilePath
   } deriving (Show)
 makeFields ''Arguments
 
 argumentsParser :: Parser Arguments
 argumentsParser = Arguments
-  <$> switch
-    (long "cpp-server" <> help "Generate server-side C++ code.")
-  <*> switch
-    (long "hs-client" <> help "Generate client-side Haskell code.")
-  <*> switch
-    (long "py-client" <> help "Generate client-side Python code.")
+  <$> codeTypeParser 
+  <*> strOption 
+    (long "language" <> help "Target language for the generated code.")
   <*> (InterfaceRoot <$> strOption
     (long "interface-root" <> help "Root directory of Thrift interface."))
-  <*> (ImplementationRoot <$> strOption
-    (long "implementation-root" <> help "Root directory for generated code."))
+  <*> strOption
+    (long "output-root" <> help "Root directory for generated code.")
 
 thriftCommand :: InterfaceRoot -> ModuleThrift -> FilePath -> String -> String
 thriftCommand interfaceRoot moduleThrift implementationDirectory language =
@@ -106,30 +122,57 @@ pyClient interfaceRoot implementationRoot = do
   putStrLn "Generated Python client code."
 
 run :: Arguments -> IO ()
-run (Arguments True False False interfaceRoot implementationRoot) = 
-  cppServer interfaceRoot implementationRoot
-run (Arguments False True False interfaceRoot implementationRoot) = 
-  hsClient interfaceRoot implementationRoot
-run (Arguments False False True interfaceRoot implementationRoot) = 
-  pyClient interfaceRoot implementationRoot
-run _ = putStrLn "Usage error."
+run (Arguments ImplementationStub _ _ _) = undefined
+run (Arguments Client _ _ _) = undefined
+{-run (Arguments True False False interfaceRoot implementationRoot) = -}
+  {-cppServer interfaceRoot implementationRoot-}
+{-run (Arguments False True False interfaceRoot implementationRoot) = -}
+  {-hsClient interfaceRoot implementationRoot-}
+{-run (Arguments False False True interfaceRoot implementationRoot) = -}
+  {-pyClient interfaceRoot implementationRoot-}
+{-run _ = putStrLn "Usage error."-}
 
-data Command = Start String | Stop
+main :: IO ()
+main = execParser opts >>= run
 
-startParser :: Parser Command
-startParser = Start <$> strOption ( long "start" )
+opts :: ParserInfo Arguments 
+opts = info (argumentsParser <**> helper)
+  ( fullDesc
+ <> progDesc "Print a greeting for TARGET"
+ <> header "hello - a test for optparse-applicative" )
 
-commandParser :: Parser Command
-commandParser =  
-  subparser
-    ( command "start" (info startParser 
-      ( progDesc "Add a file to the repository" ))
-    <> command "stop" (info (pure Stop) 
-      ( progDesc "Record changes to the repository" ))
-  )
 
-myRun :: Command -> IO ()
-myRun = undefined
+
+
+{-data Options = Options -}
+  {-{ _options -}
+    {-_optionsLanguageL :: String-}
+  {-, _optionsInterfaceRootL :: InterfaceRoot-}
+  {-, _optionsOutputRootL :: FilePath-}
+  {-} deriving (Show)-}
+{-makeFields ''Options-}
+
+
+
+{-data Command = -}
+    {-Implementation Options-}
+  {-| Client Options-}
+
+
+{-startParser :: Parser Command-}
+{-startParser = Start <$> strOption ( long "start" )-}
+
+{-commandParser :: Parser Command-}
+{-commandParser =  -}
+  {-subparser-}
+    {-( command "start" (info startParser -}
+      {-( progDesc "Add a file to the repository" ))-}
+    {-<> command "stop" (info (pure Stop) -}
+      {-( progDesc "Record changes to the repository" ))-}
+  {-)-}
+
+{-myRun :: Command -> IO ()-}
+{-myRun = undefined-}
 
 {-sample :: Parser Sample-}
 {-sample = subparser-}
@@ -141,10 +184,10 @@ myRun = undefined
                {-(progDesc "Say goodbye"))-}
        {-)-}
 
-opts :: ParserInfo Command
-opts = info (commandParser <**> helper) idm
+{-opts :: ParserInfo Command-}
+{-opts = info (commandParser <**> helper) idm-}
 
-main :: IO ()
-main = execParser opts >>= myRun
+{-main :: IO ()-}
+{-main = execParser opts >>= myRun-}
 
 
