@@ -15,15 +15,6 @@ import Thriftier.Language
 import Thriftier.ImplementationRoot
 import Options.Applicative
 
-{-data Arguments = Arguments -}
-  {-{ _argumentsCPPServerL :: Bool-}
-  {-, _argumentsHSClientL :: Bool-}
-  {-, _argumentsPYClientL :: Bool-}
-  {-, _argumentsInterfaceRootL :: InterfaceRoot-}
-  {-, _argumentsImplementationRootL :: ImplementationRoot-}
-  {-} deriving (Show)-}
-{-makeFields ''Arguments-}
-
 data CodeType = ImplementationStub | Client deriving (Eq, Show)
 
 implementationStubParser :: Parser CodeType
@@ -33,25 +24,42 @@ clientStubParser :: Parser CodeType
 clientStubParser = flag' Client (long "client")
 
 codeTypeParser :: Parser CodeType
-codeTypeParser = (implementationStubParser <|> clientStubParser)
+codeTypeParser = implementationStubParser <|> clientStubParser
+
+data Language = Cpp | Python | Haskell deriving (Eq, Show)
+
+cppParser :: Parser Language
+cppParser = flag' Cpp (long "cpp")
+
+pythonParser :: Parser Language
+pythonParser = flag' Python (long "python")
+
+haskellParser :: Parser Language
+haskellParser = flag' Haskell (long "haskell")
+
+languageParser :: Parser Language
+languageParser = cppParser <|> pythonParser <|> haskellParser
 
 data Arguments = Arguments 
   { _argumentsCodeTypeL :: CodeType
-  , _argumentsLanguageL :: String
+  , _argumentsLanguageL :: Language
   , _argumentsInterfaceRootL :: InterfaceRoot
-  , _argumentsOutputRootL :: FilePath
+  , _argumentsOutputRootL :: ImplementationRoot
   } deriving (Show)
 makeFields ''Arguments
 
 argumentsParser :: Parser Arguments
 argumentsParser = Arguments
   <$> codeTypeParser 
-  <*> strOption 
-    (long "language" <> help "Target language for the generated code.")
-  <*> (InterfaceRoot <$> strOption
-    (long "interface-root" <> help "Root directory of Thrift interface."))
-  <*> strOption
-    (long "output-root" <> help "Root directory for generated code.")
+  <*> languageParser
+  {-<*> (InterfaceRoot <$> strOption-}
+    {-(long "interface-root" <> help "Root directory of Thrift interface."))-}
+  <*> (InterfaceRoot <$> Options.Applicative.argument str 
+    (metavar "INTERFACE_ROOT" <> help "Root directory of Thrift interface."))
+  <*> (ImplementationRoot <$> Options.Applicative.argument str 
+    (metavar "OUTPUT_ROOT" <> help "Root directory for generated code."))
+  {-<*> (ImplementationRoot <$> strOption-}
+    {-(long "output-root" <> help "Root directory for generated code."))-}
 
 thriftCommand :: InterfaceRoot -> ModuleThrift -> FilePath -> String -> String
 thriftCommand interfaceRoot moduleThrift implementationDirectory language =
@@ -103,6 +111,15 @@ cppServer interfaceRoot implementationRoot = do
     skeletonModuleCPPs
   putStrLn "Generated C++ server code."
 
+cppClient :: InterfaceRoot -> ImplementationRoot -> IO ()
+cppClient interfaceRoot implementationRoot = do
+  thriftModules <- liftM (map ModuleThrift) $ 
+    findFileGlob (interfaceRoot ^. valueL) "*.thrift"
+  putStrLn $ show thriftModules
+  let tweakOutputDirectory = id
+  mapM_ (runThrift interfaceRoot implementationRoot tweakOutputDirectory "cpp:include_prefix") thriftModules
+  putStrLn "Generated C++ client code."
+
 hsClient :: InterfaceRoot -> ImplementationRoot -> IO ()
 hsClient interfaceRoot implementationRoot = do
   thriftModules <- liftM (map ModuleThrift) $ 
@@ -122,72 +139,26 @@ pyClient interfaceRoot implementationRoot = do
   putStrLn "Generated Python client code."
 
 run :: Arguments -> IO ()
-run (Arguments ImplementationStub _ _ _) = undefined
-run (Arguments Client _ _ _) = undefined
-{-run (Arguments True False False interfaceRoot implementationRoot) = -}
-  {-cppServer interfaceRoot implementationRoot-}
-{-run (Arguments False True False interfaceRoot implementationRoot) = -}
-  {-hsClient interfaceRoot implementationRoot-}
-{-run (Arguments False False True interfaceRoot implementationRoot) = -}
-  {-pyClient interfaceRoot implementationRoot-}
-{-run _ = putStrLn "Usage error."-}
+run (Arguments ImplementationStub Cpp interfaceRoot outputRoot) = 
+  cppServer interfaceRoot outputRoot
+run (Arguments Client Cpp interfaceRoot outputRoot) = 
+  cppClient interfaceRoot outputRoot
+run (Arguments Client Python interfaceRoot outputRoot) = 
+  pyClient interfaceRoot outputRoot
+run (Arguments Client Haskell interfaceRoot outputRoot) = 
+  hsClient interfaceRoot outputRoot
+run _ = putStrLn "Not implemented yet."
 
 main :: IO ()
 main = execParser opts >>= run
 
+description :: String
+description = 
+  "Generate either the server-side stub or client library code for a given language.\
+  \\n  Takes a directory containing a Thrift interface and dumps the generated code into the output directory."
+
 opts :: ParserInfo Arguments 
 opts = info (argumentsParser <**> helper)
   ( fullDesc
- <> progDesc "Print a greeting for TARGET"
- <> header "hello - a test for optparse-applicative" )
-
-
-
-
-{-data Options = Options -}
-  {-{ _options -}
-    {-_optionsLanguageL :: String-}
-  {-, _optionsInterfaceRootL :: InterfaceRoot-}
-  {-, _optionsOutputRootL :: FilePath-}
-  {-} deriving (Show)-}
-{-makeFields ''Options-}
-
-
-
-{-data Command = -}
-    {-Implementation Options-}
-  {-| Client Options-}
-
-
-{-startParser :: Parser Command-}
-{-startParser = Start <$> strOption ( long "start" )-}
-
-{-commandParser :: Parser Command-}
-{-commandParser =  -}
-  {-subparser-}
-    {-( command "start" (info startParser -}
-      {-( progDesc "Add a file to the repository" ))-}
-    {-<> command "stop" (info (pure Stop) -}
-      {-( progDesc "Record changes to the repository" ))-}
-  {-)-}
-
-{-myRun :: Command -> IO ()-}
-{-myRun = undefined-}
-
-{-sample :: Parser Sample-}
-{-sample = subparser-}
-       {-( command "hello"-}
-         {-(info hello-}
-               {-(progDesc "Print greeting"))-}
-      {-<> command "goodbye"-}
-         {-(info (pure Goodbye)-}
-               {-(progDesc "Say goodbye"))-}
-       {-)-}
-
-{-opts :: ParserInfo Command-}
-{-opts = info (commandParser <**> helper) idm-}
-
-{-main :: IO ()-}
-{-main = execParser opts >>= myRun-}
-
-
+ <> progDesc description 
+ <> header "Thriftier: Wraps a bit of Apache Thrift and makes it a bit nicer." )
