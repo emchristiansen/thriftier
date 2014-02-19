@@ -153,9 +153,10 @@ main :: IO ()
 main = execParser opts >>= run
 
 description :: String
-description = 
-  "Generate either the server-side stub or client library code for a given language.\
-  \\n  Takes a directory containing a Thrift interface and dumps the generated code into the output directory."
+description = unlines
+  [ "Generate either the server-side stub or client library code for a given language."
+  , "  Takes a directory containing a Thrift interface and dumps the generated code into the output directory."
+  ]
 
 opts :: ParserInfo Arguments 
 opts = info (argumentsParser <**> helper)
