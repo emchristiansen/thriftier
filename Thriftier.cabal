@@ -11,7 +11,7 @@ library
 
   exposed-modules:
    Thriftier.CPPFile
-   Thriftier.ImplementationRoot
+   Thriftier.OutputRoot
    Thriftier.InterfaceRoot
    Thriftier.ModulePath
    Thriftier.Generate

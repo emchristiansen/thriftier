@@ -11,7 +11,7 @@ import Data.Maybe
 import Thriftier.HandlerStub
 import Thriftier.Util
 import Thriftier.ModulePath
-import Thriftier.ImplementationRoot
+import Thriftier.OutputRoot
 import Thriftier.InterfaceRoot
 
 data CPPFile = CPPFile
@@ -38,10 +38,10 @@ mkCPPFile stub moduleParent = CPPFile
   (stub ^. includesL) 
   (stub ^. bodyL)
 
-fromSkeleton :: ImplementationRoot -> ModuleCPP -> IO CPPFile
-fromSkeleton implementationRoot skeletonModuleCPP = do
+fromSkeleton :: OutputRoot -> ModuleCPP -> IO CPPFile
+fromSkeleton outputRoot skeletonModuleCPP = do
   skeletonCode <- readFile $ joinPath 
-    [ implementationRoot ^. valueL
+    [ outputRoot ^. valueL
     , skeletonModuleCPP ^. valueL
     ]
   {-putStrLn skeletonCode-}

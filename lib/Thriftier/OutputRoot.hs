@@ -1,4 +1,4 @@
-module Thriftier.ImplementationRoot where
+module Thriftier.OutputRoot where
 
 import Control.Lens
 import Text.Printf
@@ -9,10 +9,10 @@ import Data.String.Utils
 import Data.Maybe
 import Control.Lens
 
-data ImplementationRoot = ImplementationRoot
+data OutputRoot = OutputRoot
   { _implementationrootValueL :: FilePath
   } deriving (Show)
-makeFields ''ImplementationRoot
+makeFields ''OutputRoot
 
 data InterfaceRoot = InterfaceRoot
   { _interfacerootValueL :: FilePath

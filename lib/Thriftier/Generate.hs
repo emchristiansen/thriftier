@@ -9,20 +9,20 @@ import System.FilePath.Posix
 import Thriftier.HandlerStub
 import Thriftier.CPPFile
 import Thriftier.Util
-import Thriftier.ImplementationRoot
+import Thriftier.OutputRoot
 
-generateHandler :: ImplementationRoot -> ModuleCPP -> IO ()
-generateHandler implementationRoot skeletonModuleCPP = do
-  file <- fromSkeleton implementationRoot skeletonModuleCPP
+generateHandler :: OutputRoot -> ModuleCPP -> IO ()
+generateHandler outputRoot skeletonModuleCPP = do
+  file <- fromSkeleton outputRoot skeletonModuleCPP
   writeFileUnlessExists
     (joinPath 
-      [ implementationRoot ^. valueL
+      [ outputRoot ^. valueL
       , (mkModuleCPP (file ^. moduleL)) ^. valueL
       ])
     (renderAsCPP file)
   writeFile
     (joinPath 
-      [ implementationRoot ^. valueL
+      [ outputRoot ^. valueL
       , (mkModuleHPP (file ^. moduleL)) ^. valueL
       ])
     (renderAsHPP file)

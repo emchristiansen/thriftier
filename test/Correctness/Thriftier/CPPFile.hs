@@ -12,7 +12,7 @@ import Correctness.Thriftier.Util
 hUnitTests :: TestTree
 hUnitTests = testGroup "Unit tests"
   [ testCase "declarations" $ do
-      file <-  fromSkeleton implementationRoot skeletonModuleCPP
+      file <-  fromSkeleton outputRoot skeletonModuleCPP
       (declarations file) @?= 
         [ "MatUtilHandler();"
         , "void pack( ::Mat& _return, const  ::CVType::type type, const  ::MatUnpacked& matUnpacked);"
@@ -25,7 +25,7 @@ goldenTests = testGroup "Golden tests"
   [ goldenVsFile' 
       "renderAsCPP" $
       \goldenOut -> do
-        file <-  fromSkeleton implementationRoot skeletonModuleCPP
+        file <-  fromSkeleton outputRoot skeletonModuleCPP
         writeFile 
           goldenOut
           (renderAsCPP file)
@@ -33,7 +33,7 @@ goldenTests = testGroup "Golden tests"
   , goldenVsFile' 
       "renderAsHPP" $
       \goldenOut -> do
-        file <-  fromSkeleton implementationRoot skeletonModuleCPP
+        file <-  fromSkeleton outputRoot skeletonModuleCPP
         writeFile 
           goldenOut
           (renderAsHPP file)

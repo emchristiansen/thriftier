@@ -8,7 +8,7 @@ import Test.Tasty.Golden
 import Data.List
 import Data.Ord
 import Control.Lens
-import Thriftier.ImplementationRoot
+import Thriftier.OutputRoot
 import System.FilePath.Posix
 
 import Thriftier.HandlerStub
@@ -18,14 +18,14 @@ hUnitTests :: TestTree
 hUnitTests = testGroup "Unit tests"
   [ testCase "quoteIncludes" $ do
       skeletonCode <- readFile $ joinPath 
-        [ implementationRoot ^. valueL
+        [ outputRoot ^. valueL
         , skeletonModuleCPP ^. valueL
         ]
       (quoteIncludes skeletonCode) @?= ["#include \"OpenCV/Core/MatUtil.h\""]
     
   , testCase "handlerName" $ do
       skeletonCode <- readFile $ joinPath 
-        [ implementationRoot ^. valueL
+        [ outputRoot ^. valueL
         , skeletonModuleCPP ^. valueL
         ]
       let handler = mkHandlerStub skeletonCode
@@ -38,7 +38,7 @@ goldenTests = testGroup "Golden tests"
       "classDefinitions" $
       \goldenOut -> do
         skeletonCode <- readFile $ joinPath 
-          [ implementationRoot ^. valueL
+          [ outputRoot ^. valueL
           , skeletonModuleCPP ^. valueL
           ]
         writeFile 

@@ -5,13 +5,13 @@ import Test.Tasty.QuickCheck
 import Test.Tasty.HUnit
 import Test.Tasty.Golden
 
-import Thriftier.ImplementationRoot
+import Thriftier.OutputRoot
 
 interfaceRoot :: InterfaceRoot
 interfaceRoot = InterfaceRoot "test/data/OpenCVInterface"
 
-implementationRoot :: ImplementationRoot
-implementationRoot = ImplementationRoot "test/data/OpenCVImplementation"
+outputRoot :: OutputRoot
+outputRoot = OutputRoot "test/data/OpenCVImplementation"
 
 skeletonModuleCPP :: ModuleCPP 
 skeletonModuleCPP = ModuleCPP "OpenCV/Core/MatUtil_server.skeleton.cpp"
