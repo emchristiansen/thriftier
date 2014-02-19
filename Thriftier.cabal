@@ -35,13 +35,13 @@ library
 
   default-extensions: 
     FlexibleInstances
-    FlexibleContexts
     FunctionalDependencies
     MultiParamTypeClasses
     TemplateHaskell
     TypeSynonymInstances
     QuasiQuotes
-    OverloadedStrings
+    --FlexibleContexts
+    --OverloadedStrings
 
   ghc-options: 
     -Wall 
@@ -73,14 +73,14 @@ executable thriftier
     Haskell2010
 
   default-extensions: 
-    FlexibleInstances
-    FlexibleContexts
     FunctionalDependencies
     MultiParamTypeClasses
     TemplateHaskell
-    TypeSynonymInstances
-    QuasiQuotes
-    OverloadedStrings
+    --FlexibleInstances
+    --TypeSynonymInstances
+    --QuasiQuotes
+    --FlexibleContexts
+    --OverloadedStrings
 
   ghc-options: 
     -Wall 
@@ -118,14 +118,14 @@ Test-suite correctness
     Haskell2010
 
   default-extensions: 
-    FlexibleInstances
-    FlexibleContexts
-    FunctionalDependencies
-    MultiParamTypeClasses
-    TemplateHaskell
-    TypeSynonymInstances
-    QuasiQuotes
-    OverloadedStrings
+    --FlexibleInstances
+    --FlexibleContexts
+    --FunctionalDependencies
+    --MultiParamTypeClasses
+    --TemplateHaskell
+    --TypeSynonymInstances
+    --QuasiQuotes
+    --OverloadedStrings
 
   ghc-options: 
     -Wall 
@@ -135,10 +135,10 @@ Test-suite correctness
 
   build-depends:
       base >= 4 && < 5
+    , Thriftier
     , lens
     , tasty
     , tasty-hunit
     , tasty-quickcheck
     , tasty-golden
-    , Thriftier
     , filepath
