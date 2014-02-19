@@ -15,6 +15,11 @@ import Thriftier.OutputRoot
 import Thriftier.InterfaceRoot
 import Thriftier.Module
 
+-- TODO: This should not be necessary.
+-- Something is wrong with makeFields.
+{-import qualified Thriftier.Module as Module-}
+{-import qualified Thriftier.ModuleParent as ModuleParent-}
+
 data CPPFile = CPPFile
   { _cppfileModuleL :: Module 
   , _cppfileIncludesL :: [String]
@@ -23,7 +28,7 @@ data CPPFile = CPPFile
 makeFields ''CPPFile
 
 getHandlerName :: CPPFile -> String
-getHandlerName file = last $ splitDirectories $ file ^. moduleL ^. valueL 
+getHandlerName file = last $ file ^. moduleL ^. valueL 
 
 {-cppRelativePath :: CPPFile -> ModuleCPP-}
 {-cppRelativePath file = -}
