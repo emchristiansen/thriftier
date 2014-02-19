@@ -48,41 +48,41 @@ data Arguments = Arguments
   } deriving (Show)
 makeFields ''Arguments
 
-argumentsParser :: Parser Arguments
-argumentsParser = Arguments
+argumentsParser :: FilePath -> Parser Arguments
+argumentsParser pwd = Arguments
   <$> codeTypeParser 
   <*> languageParser
   {-<*> (InterfaceRoot <$> strOption-}
     {-(long "interface-root" <> help "Root directory of Thrift interface."))-}
-  <*> (InterfaceRoot <$> Options.Applicative.argument str 
+  <*> (InterfaceRoot . (combine pwd) <$> Options.Applicative.argument str 
     (metavar "INTERFACE_ROOT" <> help "Root directory of Thrift interface."))
-  <*> (OutputRoot <$> Options.Applicative.argument str 
+  <*> (OutputRoot . (combine pwd) <$> Options.Applicative.argument str 
     (metavar "OUTPUT_ROOT" <> help "Root directory for generated code."))
   {-<*> (OutputRoot <$> strOption-}
     {-(long "output-root" <> help "Root directory for generated code."))-}
 
 thriftCommand :: InterfaceRoot -> ModuleThrift -> FilePath -> String -> String
-thriftCommand interfaceRoot moduleThrift implementationDirectory language =
+thriftCommand interfaceRoot moduleThrift outputDirectory language =
   printf 
     "cd %s; thrift -nowarn -I . --gen %s -out %s %s" 
     (normalise $ interfaceRoot ^. valueL)
     language
-    (normalise implementationDirectory)
+    (normalise outputDirectory)
     (normalise $ moduleThrift ^. valueL)
 
 runThrift :: InterfaceRoot -> OutputRoot -> (FilePath -> FilePath) -> String -> ModuleThrift -> IO ()
-runThrift interfaceRoot outputRoot tweakImplementationDirectory language moduleThrift = do
+runThrift interfaceRoot outputRoot tweakOutputDirectory language moduleThrift = do
   let 
-    implementationDirectory = tweakImplementationDirectory $ takeDirectory $ joinPath 
+    outputDirectory = tweakOutputDirectory $ takeDirectory $ joinPath 
       [ outputRoot ^. valueL
       , moduleThrift ^. valueL
       ]
-  createDirectoryIfMissing True implementationDirectory 
+  createDirectoryIfMissing True outputDirectory 
   let 
     command = thriftCommand 
       interfaceRoot 
       moduleThrift 
-      implementationDirectory
+      outputDirectory
       language
   putStrLn command
   system command
@@ -149,17 +149,19 @@ run (Arguments Client Haskell interfaceRoot outputRoot) =
   hsClient interfaceRoot outputRoot
 run _ = putStrLn "Not implemented yet."
 
-main :: IO ()
-main = execParser opts >>= run
-
 description :: String
 description = unlines
   [ "Generate either the server-side stub or client library code for a given language."
   , "  Takes a directory containing a Thrift interface and dumps the generated code into the output directory."
   ]
 
-opts :: ParserInfo Arguments 
-opts = info (argumentsParser <**> helper)
+opts :: FilePath -> ParserInfo Arguments 
+opts pwd = info (argumentsParser pwd <**> helper)
   ( fullDesc
  <> progDesc description 
  <> header "Thriftier: Wraps a bit of Apache Thrift and makes it a bit nicer." )
+
+main :: IO ()
+main = do
+  pwd <- getCurrentDirectory 
+  execParser (opts pwd) >>= run
