@@ -1,7 +1,7 @@
 module Thriftier.Module where
 
 import Control.Lens
-import Control.Lens.TH
+{-import Control.Lens.TH-}
 import System.FilePath.Posix
 
 import Thriftier.ModuleParent
@@ -18,7 +18,7 @@ Next line.
 Hi.
 -}
 data Module = Module
-  { _moduletestValueL :: [String]
+  { _moduleValueL :: [String]
   } deriving (Show)
 makeFields ''Module
 
@@ -32,9 +32,4 @@ cppPath (Module value) = addExtension (joinPath value) ".cpp"
 hppPath :: Module -> RelativePath
 hppPath (Module value) = addExtension (joinPath value) ".hpp"
 
-{-foo :: Module -> [String]-}
-{-foo m = m ^. valueL-}
-
-{-foo2 :: ModuleParent -> [String]-}
-{-foo2 m = m ^. valueL-}
 

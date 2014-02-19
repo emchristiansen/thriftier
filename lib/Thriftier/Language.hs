@@ -1,6 +1,6 @@
 module Thriftier.Language where
 
-import Control.Lens
+{-import Control.Lens-}
 import Text.Printf
 import Data.List
 import Text.Regex
@@ -9,7 +9,7 @@ import Data.String.Utils
 import Data.Maybe
 import Text.RawString.QQ
 import Data.List.Split
-import Data.Maybe
+{-import Data.Maybe-}
 {-import qualified Data.Text as Text -}
 
 thriftIncludes :: String -> [FilePath]

@@ -10,6 +10,7 @@ import Thriftier.HandlerStub
 import Thriftier.CPPFile
 import Thriftier.Util
 import Thriftier.OutputRoot
+import Thriftier.Module
 
 generateHandler :: OutputRoot -> FilePath -> IO ()
 generateHandler outputRoot skeletonPath = do
@@ -17,12 +18,12 @@ generateHandler outputRoot skeletonPath = do
   writeFileUnlessExists
     (joinPath 
       [ outputRoot ^. valueL
-      , (mkModuleCPP (file ^. moduleL)) ^. valueL
+      , cppPath (file ^. moduleL)
       ])
     (renderAsCPP file)
   writeFile
     (joinPath 
       [ outputRoot ^. valueL
-      , (mkModuleHPP (file ^. moduleL)) ^. valueL
+      , hppPath (file ^. moduleL)
       ])
     (renderAsHPP file)

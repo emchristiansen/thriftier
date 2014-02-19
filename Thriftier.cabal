@@ -22,45 +22,27 @@ library
 
   exposed-modules:
    Thriftier.CPPFile
-   Thriftier.OutputRoot
-   Thriftier.InterfaceRoot
-   --Thriftier.ModulePath
    Thriftier.Generate
    Thriftier.HandlerStub
-   Thriftier.Util
+   Thriftier.InterfaceRoot
    Thriftier.Language
-
-   --Thriftier.CPPFile
-   --Thriftier.Generate
-   --Thriftier.HandlerStub
-   --Thriftier.InterfaceRoot
-   --Thriftier.Language
-   --Thriftier.Module
-   --Thriftier.ModuleParent
-   --Thriftier.OutputRoot
-   --Thriftier.Util
+   Thriftier.Module
+   Thriftier.ModuleParent
+   Thriftier.OutputRoot
+   Thriftier.Util
 
   default-language: 
     Haskell2010
 
   default-extensions: 
     FlexibleInstances
-    FlexibleContexts
     FunctionalDependencies
     MultiParamTypeClasses
     TemplateHaskell
     TypeSynonymInstances
     QuasiQuotes
+    FlexibleContexts
     OverloadedStrings
-
-    --FlexibleInstances
-    --FunctionalDependencies
-    --MultiParamTypeClasses
-    --TemplateHaskell
-    --TypeSynonymInstances
-    --QuasiQuotes
-    --FlexibleContexts
-    --OverloadedStrings
 
   ghc-options: 
     -Wall 

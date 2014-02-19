@@ -28,7 +28,7 @@ data CPPFile = CPPFile
 makeFields ''CPPFile
 
 getHandlerName :: CPPFile -> String
-getHandlerName file = last $ file ^. moduleL ^. valueL 
+getHandlerName file = last $ file ^. moduleL ^. Thriftier.ModuleParent.valueL 
 
 {-cppRelativePath :: CPPFile -> ModuleCPP-}
 {-cppRelativePath file = -}
@@ -47,7 +47,7 @@ mkCPPFile stub moduleParent = CPPFile
 fromSkeleton :: OutputRoot -> RelativePath -> IO CPPFile
 fromSkeleton outputRoot skeletonPath = do
   skeletonCode <- readFile $ joinPath 
-    [ outputRoot ^. valueL
+    [ outputRoot ^. Thriftier.OutputRoot.valueL
     , skeletonPath
     ]
   {-putStrLn skeletonCode-}
@@ -104,7 +104,7 @@ declarations file =
 renderAsHPP :: CPPFile -> String
 renderAsHPP file = 
   let 
-    guard = mkString "_" "_" "_" $ file ^. moduleL ^. valueL 
+    guard = mkString "_" "_" "_" $ file ^. moduleL ^. Thriftier.ModuleParent.valueL 
     outerDeclaration = (init $ takeWhile (/= '{') $ file ^. definitionL) ++ " {"
     declaration = unlines $
       [outerDeclaration] ++
