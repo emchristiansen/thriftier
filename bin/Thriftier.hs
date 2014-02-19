@@ -1,19 +1,22 @@
 import System.Environment
-import System.FilePath.Glob
+{-import System.FilePath.Glob-}
 import System.FilePath.Find
 {-import System.Process-}
 import System.Cmd
 import System.FilePath.Posix
 import Text.Printf
-import Text.Regex
+{-import Text.Regex-}
 import System.Directory
 import Control.Lens
 import Control.Monad
+import Options.Applicative
 
 import Thriftier.Generate
-import Thriftier.Language
+{-import Thriftier.Language-}
 import Thriftier.OutputRoot
-import Options.Applicative
+import Thriftier.InterfaceRoot
+import Thriftier.Module
+import Thriftier.ModuleParent
 
 data CodeType = ImplementationStub | Client deriving (Eq, Show)
 
@@ -61,27 +64,28 @@ argumentsParser pwd = Arguments
   {-<*> (OutputRoot <$> strOption-}
     {-(long "output-root" <> help "Root directory for generated code."))-}
 
-thriftCommand :: InterfaceRoot -> ModuleThrift -> FilePath -> String -> String
-thriftCommand interfaceRoot moduleThrift outputDirectory language =
+thriftCommand :: InterfaceRoot -> Module -> FilePath -> String -> String
+thriftCommand interfaceRoot module' outputDirectory language =
   printf 
     "cd %s; thrift -nowarn -I . --gen %s -out %s %s" 
-    (normalise $ interfaceRoot ^. valueL)
+    -- TODO: Figure out why TH is failing here.
+    (normalise $ interfaceRoot ^. Thriftier.InterfaceRoot.valueL)
     language
     (normalise outputDirectory)
-    (normalise $ moduleThrift ^. valueL)
+    (normalise $ thriftPath module')
 
-runThrift :: InterfaceRoot -> OutputRoot -> (FilePath -> FilePath) -> String -> ModuleThrift -> IO ()
-runThrift interfaceRoot outputRoot tweakOutputDirectory language moduleThrift = do
+runThrift :: InterfaceRoot -> OutputRoot -> (FilePath -> FilePath) -> String -> Module -> IO ()
+runThrift interfaceRoot outputRoot tweakOutputDirectory language module' = do
   let 
-    outputDirectory = tweakOutputDirectory $ takeDirectory $ joinPath 
-      [ outputRoot ^. valueL
-      , moduleThrift ^. valueL
+    outputDirectory = tweakOutputDirectory $ joinPath 
+      [ outputRoot ^. Thriftier.OutputRoot.valueL
+      , joinPath $ module' ^. Thriftier.ModuleParent.valueL
       ]
   createDirectoryIfMissing True outputDirectory 
   let 
     command = thriftCommand 
       interfaceRoot 
-      moduleThrift 
+      module' 
       outputDirectory
       language
   putStrLn command
@@ -92,29 +96,36 @@ findFileGlob :: FilePath -> String -> IO [FilePath]
 findFileGlob root globPattern = liftM (map (makeRelative root)) $ 
   find always (fileName ~~? globPattern) root
 
+pathToModule :: FilePath -> Module
+pathToModule = Module . splitPath . takeDirectory
+
 cppServer :: InterfaceRoot -> OutputRoot -> IO ()
 cppServer interfaceRoot outputRoot = do
-  thriftModules <- liftM (map ModuleThrift) $ 
-    findFileGlob (interfaceRoot ^. valueL) "*.thrift"
+  {-thriftModules <- liftM (map Module . splitPath . takeDirectory) $ -}
+    {-findFileGlob (interfaceRoot ^. Thriftier.InterfaceRoot.valueL) "*.thrift"-}
+  thriftModules <- liftM (map pathToModule) $ 
+    findFileGlob (interfaceRoot ^. Thriftier.InterfaceRoot.valueL) "*.thrift"
   putStrLn $ show thriftModules
   mapM_ (runThrift interfaceRoot outputRoot id "cpp:include_prefix") thriftModules
-  skeletonModuleCPPs <- liftM (map ModuleCPP) $
-    findFileGlob (outputRoot ^. valueL) "*_server.skeleton.cpp"
-  putStrLn $ show skeletonModuleCPPs
-  mapM_ (generateHandler outputRoot) skeletonModuleCPPs
+  skeletonPaths <- findFileGlob (outputRoot ^. Thriftier.OutputRoot.valueL) "*_server.skeleton.cpp"
+  {-skeletonModuleCPPs <- liftM (map Module . splitPath . takeDirectory) $-}
+    {-findFileGlob (outputRoot ^. Thriftier.OutputRoot.valueL) "*_server.skeleton.cpp"-}
+  putStrLn $ show skeletonPaths
+  mapM_ (generateHandler outputRoot) skeletonPaths
   -- Remove the skeleton files.
-  mapM_ 
-    (\skeletonModuleCPP -> removeFile $ joinPath 
-      [ outputRoot ^. valueL
-      , skeletonModuleCPP ^. valueL
-      ]) 
-    skeletonModuleCPPs
+  mapM_ removeFile skeletonPaths
+  {-mapM_ -}
+    {-(\skeletonModuleCPP -> removeFile $ joinPath -}
+      {-[ outputRoot ^. valueL-}
+      {-, skeletonModuleCPP ^. valueL-}
+      {-]) -}
+    {-skeletonModuleCPPs-}
   putStrLn "Generated C++ server code."
 
 cppClient :: InterfaceRoot -> OutputRoot -> IO ()
 cppClient interfaceRoot outputRoot = do
-  thriftModules <- liftM (map ModuleThrift) $ 
-    findFileGlob (interfaceRoot ^. valueL) "*.thrift"
+  thriftModules <- liftM (map pathToModule) $ 
+    findFileGlob (interfaceRoot ^. Thriftier.InterfaceRoot.valueL) "*.thrift"
   putStrLn $ show thriftModules
   let tweakOutputDirectory = id
   mapM_ (runThrift interfaceRoot outputRoot tweakOutputDirectory "cpp:include_prefix") thriftModules
@@ -122,8 +133,8 @@ cppClient interfaceRoot outputRoot = do
 
 hsClient :: InterfaceRoot -> OutputRoot -> IO ()
 hsClient interfaceRoot outputRoot = do
-  thriftModules <- liftM (map ModuleThrift) $ 
-    findFileGlob (interfaceRoot ^. valueL) "*.thrift"
+  thriftModules <- liftM (map pathToModule) $ 
+    findFileGlob (interfaceRoot ^. Thriftier.InterfaceRoot.valueL) "*.thrift"
   putStrLn $ show thriftModules
   let tweakOutputDirectory = (++ "/gen-hs")
   mapM_ (runThrift interfaceRoot outputRoot tweakOutputDirectory "hs") thriftModules
@@ -131,8 +142,8 @@ hsClient interfaceRoot outputRoot = do
 
 pyClient :: InterfaceRoot -> OutputRoot -> IO ()
 pyClient interfaceRoot outputRoot = do
-  thriftModules <- liftM (map ModuleThrift) $ 
-    findFileGlob (interfaceRoot ^. valueL) "*.thrift"
+  thriftModules <- liftM (map pathToModule) $ 
+    findFileGlob (interfaceRoot ^. Thriftier.InterfaceRoot.valueL) "*.thrift"
   putStrLn $ show thriftModules
   let tweakOutputDirectory = id --(++ "/gen-py")
   mapM_ (runThrift interfaceRoot outputRoot tweakOutputDirectory "py:new_style") thriftModules

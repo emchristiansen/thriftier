@@ -32,4 +32,5 @@ cppPath (Module value) = addExtension (joinPath value) ".cpp"
 hppPath :: Module -> RelativePath
 hppPath (Module value) = addExtension (joinPath value) ".hpp"
 
-
+thriftPath :: Module -> RelativePath
+thriftPath (Module value) = addExtension (joinPath value) ".thrift"
