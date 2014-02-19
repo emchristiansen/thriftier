@@ -1,9 +1,9 @@
 module Thriftier.Generate where
 
 import Control.Lens
-import Text.Printf
-import Data.List
-import Text.Regex
+{-import Text.Printf-}
+{-import Data.List-}
+{-import Text.Regex-}
 import System.FilePath.Posix
 
 import Thriftier.HandlerStub

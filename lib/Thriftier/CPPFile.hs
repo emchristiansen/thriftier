@@ -10,7 +10,7 @@ import Data.Maybe
 
 import Thriftier.HandlerStub
 import Thriftier.Util
-import Thriftier.ModulePath
+{-import Thriftier.ModulePath-}
 import Thriftier.OutputRoot
 import Thriftier.InterfaceRoot
 

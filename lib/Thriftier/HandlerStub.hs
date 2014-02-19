@@ -2,7 +2,7 @@ module Thriftier.HandlerStub where
 
 import Control.Lens
 import Text.Printf
-import Data.List
+{-import Data.List-}
 import Text.Regex
 import System.FilePath.Posix
 
