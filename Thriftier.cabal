@@ -27,10 +27,7 @@ library
    Thriftier.InterfaceRoot
    Thriftier.Language
    Thriftier.Module
-   Thriftier.ModuleCPP
-   Thriftier.ModuleHPP
    Thriftier.ModuleParent
-   Thriftier.ModuleThrift
    Thriftier.OutputRoot
    Thriftier.Util
 
@@ -44,8 +41,8 @@ library
     TemplateHaskell
     TypeSynonymInstances
     QuasiQuotes
-    --FlexibleContexts
-    --OverloadedStrings
+    FlexibleContexts
+    OverloadedStrings
 
   ghc-options: 
     -Wall 

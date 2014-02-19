@@ -3,13 +3,17 @@ module Thriftier.ModuleParent where
 import Control.Lens
 import System.FilePath.Posix
 
-import Thriftier.ModuleCPP
+{-import Thriftier.ModuleCPP-}
 
 data ModuleParent = ModuleParent
-  { _moduleparentValueL :: FilePath
+  { _moduleparentValueL :: [String]
   } deriving (Show)
 makeFields ''ModuleParent
 
-mkParentFromModuleCPP :: ModuleCPP -> ModuleParent
-mkParentFromModuleCPP moduleCPP = 
-  ModuleParent $ takeDirectory $ moduleCPP ^. valueL
+mkParentFromFilePath :: FilePath -> ModuleParent
+mkParentFromFilePath path = 
+  ModuleParent $ init $ splitPath $ normalise path
+
+{-mkParentFromModuleCPP :: ModuleCPP -> ModuleParent-}
+{-mkParentFromModuleCPP moduleCPP = -}
+  {-ModuleParent $ takeDirectory $ moduleCPP ^. valueL-}

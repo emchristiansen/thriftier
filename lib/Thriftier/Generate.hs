@@ -11,9 +11,9 @@ import Thriftier.CPPFile
 import Thriftier.Util
 import Thriftier.OutputRoot
 
-generateHandler :: OutputRoot -> ModuleCPP -> IO ()
-generateHandler outputRoot skeletonModuleCPP = do
-  file <- fromSkeleton outputRoot skeletonModuleCPP
+generateHandler :: OutputRoot -> FilePath -> IO ()
+generateHandler outputRoot skeletonPath = do
+  file <- fromSkeleton outputRoot skeletonPath
   writeFileUnlessExists
     (joinPath 
       [ outputRoot ^. valueL

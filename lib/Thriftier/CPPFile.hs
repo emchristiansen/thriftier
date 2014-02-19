@@ -10,9 +10,10 @@ import Data.Maybe
 
 import Thriftier.HandlerStub
 import Thriftier.Util
-{-import Thriftier.ModulePath-}
+import Thriftier.ModuleParent
 import Thriftier.OutputRoot
 import Thriftier.InterfaceRoot
+import Thriftier.Module
 
 data CPPFile = CPPFile
   { _cppfileModuleL :: Module 
@@ -38,11 +39,11 @@ mkCPPFile stub moduleParent = CPPFile
   (stub ^. includesL) 
   (stub ^. bodyL)
 
-fromSkeleton :: OutputRoot -> ModuleCPP -> IO CPPFile
-fromSkeleton outputRoot skeletonModuleCPP = do
+fromSkeleton :: OutputRoot -> RelativePath -> IO CPPFile
+fromSkeleton outputRoot skeletonPath = do
   skeletonCode <- readFile $ joinPath 
     [ outputRoot ^. valueL
-    , skeletonModuleCPP ^. valueL
+    , skeletonPath
     ]
   {-putStrLn skeletonCode-}
   {-putStrLn skeletonPath-}
@@ -50,7 +51,7 @@ fromSkeleton outputRoot skeletonModuleCPP = do
   {-putStrLn $ takeDirectory $ normalise skeletonPath-}
   return $ mkCPPFile
     (mkHandlerStub skeletonCode)
-    (mkParentFromModuleCPP skeletonModuleCPP)
+    (mkParentFromFilePath skeletonPath)
 
 toDefinitionSyntax :: String -> String -> String
 toDefinitionSyntax handlerName body =
@@ -78,7 +79,7 @@ toDefinitionSyntax handlerName body =
 
 renderAsCPP :: CPPFile -> String
 renderAsCPP file = unlines $ 
-  [printf "#include \"%s\"" $ (mkModuleHPP (file ^. moduleL)) ^. valueL] ++ 
+  [printf "#include \"%s\"" $ hppPath (file ^. moduleL)] ++ 
   [""] ++ 
   file ^. includesL ++
   [""] ++ 
@@ -98,7 +99,7 @@ declarations file =
 renderAsHPP :: CPPFile -> String
 renderAsHPP file = 
   let 
-    guard = mkString "_" "_" "_" $ splitDirectories $ file ^. moduleL ^. valueL 
+    guard = mkString "_" "_" "_" $ file ^. moduleL ^. valueL 
     outerDeclaration = (init $ takeWhile (/= '{') $ file ^. definitionL) ++ " {"
     declaration = unlines $
       [outerDeclaration] ++

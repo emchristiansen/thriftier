@@ -3,6 +3,8 @@ module Thriftier.Util where
 import Data.List
 import System.Directory
 
+type RelativePath = FilePath
+
 mkString :: String -> String -> String -> [String] -> String
 mkString start separator end list = 
   start ++
