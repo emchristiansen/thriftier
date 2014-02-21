@@ -17,6 +17,7 @@ import Thriftier.OutputRoot
 import Thriftier.InterfaceRoot
 import Thriftier.Module
 import Thriftier.ModuleParent
+import Thriftier.HasValueL
 
 data CodeType = ImplementationStub | Client deriving (Eq, Show)
 

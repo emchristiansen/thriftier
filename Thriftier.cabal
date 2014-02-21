@@ -24,6 +24,7 @@ library
    Thriftier.CPPFile
    Thriftier.Generate
    Thriftier.HandlerStub
+   Thriftier.HasValueL
    Thriftier.InterfaceRoot
    Thriftier.Language
    Thriftier.Module
