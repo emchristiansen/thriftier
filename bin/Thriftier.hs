@@ -97,7 +97,7 @@ findFileGlob root globPattern = liftM (map (makeRelative root)) $
   find always (fileName ~~? globPattern) root
 
 pathToModule :: FilePath -> Module
-pathToModule = Module . splitPath . takeDirectory
+pathToModule = Module . splitDirectories . takeDirectory
 
 cppServer :: InterfaceRoot -> OutputRoot -> IO ()
 cppServer interfaceRoot outputRoot = do

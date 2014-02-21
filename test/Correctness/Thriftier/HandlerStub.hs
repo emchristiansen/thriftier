@@ -20,14 +20,14 @@ hUnitTests = testGroup "Unit tests"
   [ testCase "quoteIncludes" $ do
       skeletonCode <- readFile $ joinPath 
         [ outputRoot ^. valueL
-        , joinPath $ skeletonModuleCPP ^. valueL
+        , skeletonPath
         ]
       (quoteIncludes skeletonCode) @?= ["#include \"OpenCV/Core/MatUtil.h\""]
     
   , testCase "handlerName" $ do
       skeletonCode <- readFile $ joinPath 
         [ outputRoot ^. valueL
-        , joinPath $ skeletonModuleCPP ^. valueL
+        , skeletonPath
         ]
       let handler = mkHandlerStub skeletonCode
       (handlerName handler) @?= "MatUtilHandler"
@@ -40,7 +40,7 @@ goldenTests = testGroup "Golden tests"
       \goldenOut -> do
         skeletonCode <- readFile $ joinPath 
           [ outputRoot ^. valueL
-          , joinPath $ skeletonModuleCPP ^. valueL
+          , skeletonPath
           ]
         writeFile 
           goldenOut

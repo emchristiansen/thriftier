@@ -19,7 +19,7 @@ skeletonModuleCPP :: Module
 skeletonModuleCPP = Module ["OpenCV", "Core", "MatUtilHandler"]
 
 skeletonPath :: FilePath
-skeletonPath = "test/data/gen-cpp/MatUtil_server.skeleton.cpp"
+skeletonPath = "OpenCV/Core/MatUtil_server.skeleton.cpp"
 
 goldenPath :: FilePath
 goldenPath = "test/data/golden/"

@@ -15,7 +15,7 @@ makeFields ''ModuleParent
 
 mkParentFromFilePath :: FilePath -> ModuleParent
 mkParentFromFilePath path = 
-  ModuleParent $ init $ splitPath $ normalise path
+  ModuleParent $ init $ splitDirectories $ normalise path
 
 {-mkParentFromModuleCPP :: ModuleCPP -> ModuleParent-}
 {-mkParentFromModuleCPP moduleCPP = -}

@@ -20,7 +20,7 @@ Hi.
 -}
 data Module = Module
   { _moduleValueL :: [String]
-  } deriving (Show)
+  } deriving (Eq, Show)
 makeFields ''Module
 
 mkModule :: ModuleParent -> String -> Module

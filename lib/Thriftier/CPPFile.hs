@@ -20,7 +20,7 @@ data CPPFile = CPPFile
   { _cppfileModuleL :: Module 
   , _cppfileIncludesL :: [String]
   , _cppfileDefinitionL :: String
-  }
+  } deriving (Eq, Show)
 makeFields ''CPPFile
 
 getHandlerName :: CPPFile -> String
