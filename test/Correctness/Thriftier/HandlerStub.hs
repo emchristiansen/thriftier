@@ -12,6 +12,7 @@ import Thriftier.OutputRoot
 import System.FilePath.Posix
 
 import Thriftier.HandlerStub
+import Thriftier.HasValueL
 import Correctness.Thriftier.Util
 
 hUnitTests :: TestTree
@@ -19,14 +20,14 @@ hUnitTests = testGroup "Unit tests"
   [ testCase "quoteIncludes" $ do
       skeletonCode <- readFile $ joinPath 
         [ outputRoot ^. valueL
-        , skeletonModuleCPP ^. valueL
+        , joinPath $ skeletonModuleCPP ^. valueL
         ]
       (quoteIncludes skeletonCode) @?= ["#include \"OpenCV/Core/MatUtil.h\""]
     
   , testCase "handlerName" $ do
       skeletonCode <- readFile $ joinPath 
         [ outputRoot ^. valueL
-        , skeletonModuleCPP ^. valueL
+        , joinPath $ skeletonModuleCPP ^. valueL
         ]
       let handler = mkHandlerStub skeletonCode
       (handlerName handler) @?= "MatUtilHandler"
@@ -39,7 +40,7 @@ goldenTests = testGroup "Golden tests"
       \goldenOut -> do
         skeletonCode <- readFile $ joinPath 
           [ outputRoot ^. valueL
-          , skeletonModuleCPP ^. valueL
+          , joinPath $ skeletonModuleCPP ^. valueL
           ]
         writeFile 
           goldenOut
