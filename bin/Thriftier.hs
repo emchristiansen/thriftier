@@ -68,8 +68,7 @@ thriftCommand :: InterfaceRoot -> Module -> FilePath -> String -> String
 thriftCommand interfaceRoot module' outputDirectory language =
   printf 
     "cd %s; thrift -nowarn -I . --gen %s -out %s %s" 
-    -- TODO: Figure out why TH is failing here.
-    (normalise $ interfaceRoot ^. Thriftier.InterfaceRoot.valueL)
+    (normalise $ interfaceRoot ^. valueL)
     language
     (normalise outputDirectory)
     (normalise $ thriftPath module')
@@ -78,8 +77,8 @@ runThrift :: InterfaceRoot -> OutputRoot -> (FilePath -> FilePath) -> String -> 
 runThrift interfaceRoot outputRoot tweakOutputDirectory language module' = do
   let 
     outputDirectory = tweakOutputDirectory $ joinPath 
-      [ outputRoot ^. Thriftier.OutputRoot.valueL
-      , joinPath $ module' ^. Thriftier.ModuleParent.valueL
+      [ outputRoot ^. valueL
+      , joinPath $ module' ^. valueL
       ]
   createDirectoryIfMissing True outputDirectory 
   let 
@@ -104,10 +103,10 @@ cppServer interfaceRoot outputRoot = do
   {-thriftModules <- liftM (map Module . splitPath . takeDirectory) $ -}
     {-findFileGlob (interfaceRoot ^. Thriftier.InterfaceRoot.valueL) "*.thrift"-}
   thriftModules <- liftM (map pathToModule) $ 
-    findFileGlob (interfaceRoot ^. Thriftier.InterfaceRoot.valueL) "*.thrift"
+    findFileGlob (interfaceRoot ^. valueL) "*.thrift"
   putStrLn $ show thriftModules
   mapM_ (runThrift interfaceRoot outputRoot id "cpp:include_prefix") thriftModules
-  skeletonPaths <- findFileGlob (outputRoot ^. Thriftier.OutputRoot.valueL) "*_server.skeleton.cpp"
+  skeletonPaths <- findFileGlob (outputRoot ^. valueL) "*_server.skeleton.cpp"
   {-skeletonModuleCPPs <- liftM (map Module . splitPath . takeDirectory) $-}
     {-findFileGlob (outputRoot ^. Thriftier.OutputRoot.valueL) "*_server.skeleton.cpp"-}
   putStrLn $ show skeletonPaths
@@ -125,7 +124,7 @@ cppServer interfaceRoot outputRoot = do
 cppClient :: InterfaceRoot -> OutputRoot -> IO ()
 cppClient interfaceRoot outputRoot = do
   thriftModules <- liftM (map pathToModule) $ 
-    findFileGlob (interfaceRoot ^. Thriftier.InterfaceRoot.valueL) "*.thrift"
+    findFileGlob (interfaceRoot ^. valueL) "*.thrift"
   putStrLn $ show thriftModules
   let tweakOutputDirectory = id
   mapM_ (runThrift interfaceRoot outputRoot tweakOutputDirectory "cpp:include_prefix") thriftModules
@@ -134,7 +133,7 @@ cppClient interfaceRoot outputRoot = do
 hsClient :: InterfaceRoot -> OutputRoot -> IO ()
 hsClient interfaceRoot outputRoot = do
   thriftModules <- liftM (map pathToModule) $ 
-    findFileGlob (interfaceRoot ^. Thriftier.InterfaceRoot.valueL) "*.thrift"
+    findFileGlob (interfaceRoot ^. valueL) "*.thrift"
   putStrLn $ show thriftModules
   let tweakOutputDirectory = (++ "/gen-hs")
   mapM_ (runThrift interfaceRoot outputRoot tweakOutputDirectory "hs") thriftModules
@@ -143,7 +142,7 @@ hsClient interfaceRoot outputRoot = do
 pyClient :: InterfaceRoot -> OutputRoot -> IO ()
 pyClient interfaceRoot outputRoot = do
   thriftModules <- liftM (map pathToModule) $ 
-    findFileGlob (interfaceRoot ^. Thriftier.InterfaceRoot.valueL) "*.thrift"
+    findFileGlob (interfaceRoot ^. valueL) "*.thrift"
   putStrLn $ show thriftModules
   let tweakOutputDirectory = id --(++ "/gen-py")
   mapM_ (runThrift interfaceRoot outputRoot tweakOutputDirectory "py:new_style") thriftModules

@@ -15,11 +15,6 @@ import Thriftier.OutputRoot
 import Thriftier.InterfaceRoot
 import Thriftier.Module
 
--- TODO: This should not be necessary.
--- Something is wrong with makeFields.
-{-import qualified Thriftier.Module as Module-}
-{-import qualified Thriftier.ModuleParent as ModuleParent-}
-
 data CPPFile = CPPFile
   { _cppfileModuleL :: Module 
   , _cppfileIncludesL :: [String]
@@ -28,7 +23,7 @@ data CPPFile = CPPFile
 makeFields ''CPPFile
 
 getHandlerName :: CPPFile -> String
-getHandlerName file = last $ file ^. moduleL ^. Thriftier.ModuleParent.valueL 
+getHandlerName file = last $ file ^. moduleL ^. valueL 
 
 {-cppRelativePath :: CPPFile -> ModuleCPP-}
 {-cppRelativePath file = -}
@@ -47,7 +42,7 @@ mkCPPFile stub moduleParent = CPPFile
 fromSkeleton :: OutputRoot -> RelativePath -> IO CPPFile
 fromSkeleton outputRoot skeletonPath = do
   skeletonCode <- readFile $ joinPath 
-    [ outputRoot ^. Thriftier.OutputRoot.valueL
+    [ outputRoot ^. valueL
     , skeletonPath
     ]
   {-putStrLn skeletonCode-}
@@ -104,7 +99,7 @@ declarations file =
 renderAsHPP :: CPPFile -> String
 renderAsHPP file = 
   let 
-    guard = mkString "_" "_" "_" $ file ^. moduleL ^. Thriftier.ModuleParent.valueL 
+    guard = mkString "_" "_" "_" $ file ^. moduleL ^. valueL 
     outerDeclaration = (init $ takeWhile (/= '{') $ file ^. definitionL) ++ " {"
     declaration = unlines $
       [outerDeclaration] ++
