@@ -3,7 +3,10 @@ module Thriftier.ModuleParent where
 import Control.Lens
 import System.FilePath.Posix
 
+import Thriftier.HasValueL
+
 {-import Thriftier.ModuleCPP-}
+
 
 data ModuleParent = ModuleParent
   { _moduleparentValueL :: [String]

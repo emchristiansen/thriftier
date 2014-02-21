@@ -11,6 +11,7 @@ import Thriftier.CPPFile
 import Thriftier.Util
 import Thriftier.OutputRoot
 import Thriftier.Module
+import Thriftier.HasValueL
 
 generateHandler :: OutputRoot -> FilePath -> IO ()
 generateHandler outputRoot skeletonPath = do

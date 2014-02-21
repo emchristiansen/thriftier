@@ -4,6 +4,7 @@ import Control.Lens
 {-import Control.Lens.TH-}
 import System.FilePath.Posix
 
+import Thriftier.HasValueL
 import Thriftier.ModuleParent
 import Thriftier.Util
 

@@ -14,6 +14,7 @@ import Thriftier.ModuleParent
 import Thriftier.OutputRoot
 import Thriftier.InterfaceRoot
 import Thriftier.Module
+import Thriftier.HasValueL
 
 data CPPFile = CPPFile
   { _cppfileModuleL :: Module 
