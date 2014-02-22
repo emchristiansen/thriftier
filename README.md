@@ -17,6 +17,7 @@ Then clone this repository and use cabal to install Thriftier.
 ```
 git clone https://github.com/emchristiansen/thriftier
 cd thriftier
+cabal update
 cabal install --only-dependencies
 cabal configure
 cabal build
