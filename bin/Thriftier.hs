@@ -79,7 +79,7 @@ runThrift interfaceRoot outputRoot tweakOutputDirectory language module' = do
   let 
     outputDirectory = tweakOutputDirectory $ joinPath 
       [ outputRoot ^. valueL
-      , joinPath $ module' ^. valueL
+      , joinPath $ init $ module' ^. valueL
       ]
   createDirectoryIfMissing True outputDirectory 
   let 
@@ -97,7 +97,13 @@ findFileGlob root globPattern = liftM (map (makeRelative root)) $
   find always (fileName ~~? globPattern) root
 
 pathToModule :: FilePath -> Module
-pathToModule = Module . splitDirectories . takeDirectory
+pathToModule = Module . splitDirectories . dropExtension
+
+removeSkeletonFiles :: OutputRoot -> IO ()
+removeSkeletonFiles outputRoot = do
+  skeletonPaths <- findFileGlob (outputRoot ^. valueL) "*_server.skeleton.cpp"
+  let rootedHere = map joinPath $ map (\s -> [outputRoot ^.valueL, s]) skeletonPaths
+  mapM_ removeFile rootedHere
 
 cppServer :: InterfaceRoot -> OutputRoot -> IO ()
 cppServer interfaceRoot outputRoot = do
@@ -113,7 +119,9 @@ cppServer interfaceRoot outputRoot = do
   putStrLn $ show skeletonPaths
   mapM_ (generateHandler outputRoot) skeletonPaths
   -- Remove the skeleton files.
-  mapM_ removeFile skeletonPaths
+  removeSkeletonFiles outputRoot
+  {-let rootedHere = map joinPath $ map (\s -> [outputRoot ^.valueL, s]) skeletonPaths-}
+  {-mapM_ removeFile rootedHere-}
   {-mapM_ -}
     {-(\skeletonModuleCPP -> removeFile $ joinPath -}
       {-[ outputRoot ^. valueL-}
@@ -129,6 +137,7 @@ cppClient interfaceRoot outputRoot = do
   putStrLn $ show thriftModules
   let tweakOutputDirectory = id
   mapM_ (runThrift interfaceRoot outputRoot tweakOutputDirectory "cpp:include_prefix") thriftModules
+  removeSkeletonFiles outputRoot
   putStrLn "Generated C++ client code."
 
 hsClient :: InterfaceRoot -> OutputRoot -> IO ()
